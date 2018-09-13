@@ -21,4 +21,12 @@ public class ResultInfo implements Serializable {
     public void setMsg(String msg) {
         this.msg = msg;
     }
+
+    public ResultInfo(Boolean success, String msg) {
+        this.success = success;
+        this.msg = msg;
+    }
+
+    public ResultInfo() {
+    }
 }
