@@ -1,13 +1,14 @@
 package entity;
 
 import com.suyigou.pojo.TbSpecification;
+import com.suyigou.pojo.TbSpecificationOption;
 
 import java.io.Serializable;
 import java.util.List;
 
 public class Specification implements Serializable {
     private TbSpecification specification;
-    private List specificationOptionList;
+    private List<TbSpecificationOption> specificationOptionList;
 
     public TbSpecification getSpecification() {
         return specification;
@@ -17,11 +18,11 @@ public class Specification implements Serializable {
         this.specification = specification;
     }
 
-    public List getSpecificationOptionList() {
+    public List<TbSpecificationOption> getSpecificationOptionList() {
         return specificationOptionList;
     }
 
-    public void setSpecificationOptionList(List specificationOptionList) {
+    public void setSpecificationOptionList(List<TbSpecificationOption> specificationOptionList) {
         this.specificationOptionList = specificationOptionList;
     }
 }

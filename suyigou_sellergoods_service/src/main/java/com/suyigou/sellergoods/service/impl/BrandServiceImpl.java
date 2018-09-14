@@ -8,12 +8,17 @@ import com.suyigou.pojo.TbBrand;
 import com.suyigou.pojo.TbBrandExample;
 import com.suyigou.sellergoods.service.BrandService;
 import entity.PageResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class BrandServiceImpl implements BrandService {
+    Logger logger = LoggerFactory.getLogger(BrandServiceImpl.class);
+
     @Autowired
     private TbBrandMapper brandMapper;
 
@@ -71,4 +76,10 @@ public class BrandServiceImpl implements BrandService {
             brandMapper.deleteByPrimaryKey(id);
         }
     }
+
+    @Override
+    public List<Map> selectOptionList() {
+        return brandMapper.selectOptionList();
+    }
+
 }

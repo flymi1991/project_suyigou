@@ -4,10 +4,11 @@ import com.suyigou.pojo.TbBrand;
 import entity.PageResult;
 
 import java.util.List;
+import java.util.Map;
 
 public interface BrandService {
     //查找所有的品牌
-    public List<TbBrand> findAll();
+    List<TbBrand> findAll();
 
     PageResult findByPage(int curPage, int size);
 
@@ -20,4 +21,6 @@ public interface BrandService {
     void delete(List<Long> ids);
 
     PageResult findByPage(TbBrand brand, int page, int rows);
+
+    List<Map> selectOptionList();
 }

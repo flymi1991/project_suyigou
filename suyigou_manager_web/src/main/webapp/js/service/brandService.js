@@ -29,4 +29,9 @@ app.service("brandService", function ($http) {
     this.update = function (entity) {
         return $http.post('../brand/update.do', entity);
     }
+
+    //下拉选择数据源
+    this.selectOptionList = function () {
+        return $http.get("../brand/selectOptionList.do");
+    }
 })

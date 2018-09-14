@@ -2,8 +2,10 @@ package com.suyigou.sellergoods.service;
 
 import com.suyigou.pojo.TbSpecification;
 import entity.PageResult;
+import entity.Specification;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 服务层接口
@@ -30,14 +32,16 @@ public interface SpecificationService {
 
     /**
      * 增加
+     * @param specification
      */
-    public void add(TbSpecification specification);
+    public void add(Specification specification);
 
 
     /**
      * 修改
+     * @param specification
      */
-    public void update(TbSpecification specification);
+    public void update(Specification specification);
 
 
     /**
@@ -46,7 +50,7 @@ public interface SpecificationService {
      * @param id
      * @return
      */
-    public TbSpecification findOne(Long id);
+    public Specification findOne(Long id);
 
 
     /**
@@ -65,4 +69,5 @@ public interface SpecificationService {
      */
     public PageResult findPage(TbSpecification specification, int pageNum, int pageSize);
 
+    List<Map> selectOptionList();
 }

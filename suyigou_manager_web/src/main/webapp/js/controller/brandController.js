@@ -46,7 +46,7 @@ app.controller("brandController", function ($scope, $controller, brandService) {
                 if (!result.success) {
                     alert(result.msg);
                 }
-                $scope.reloadPage();
+                $scope.reloadList();
             }
         )
     };
@@ -58,7 +58,8 @@ app.controller("brandController", function ($scope, $controller, brandService) {
                 if (!result.success) {
                     alert(result.msg);
                 }
-                $scope.reloadPage();
+                $scope.delList = [];
+                $scope.reloadList();
             }
         )
     };

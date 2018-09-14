@@ -2,18 +2,17 @@ app.controller("baseController", function ($scope) {
     //定义分页参数对象
     $scope.paginationConf = {
         curPage: 1,
-        itemsPerPage: 10,
-        totalItem: 10,
-        perPageOptions: [10, 20, 30],
+        itemsPerPage: 3,
+        totalItem: 8,
+        perPageOptions: [3, 6, 9],
         onChange: function () {
-            $scope.reloadPage();
+            $scope.reloadList();
         }
     };
     $scope.searchEntity = {};
 
     //重新加载页面
-    $scope.reloadPage = function () {
-        // $scope.findByPage($scope.pagipaginationConfnationConf.curPage, $scope.paginationConf.itemsPerPage);
+    $scope.reloadList = function () {
         $scope.search($scope.paginationConf.curPage, $scope.paginationConf.itemsPerPage, $scope.searchEntity);
     };
 
@@ -29,4 +28,16 @@ app.controller("baseController", function ($scope) {
             $scope.delList.splice(index, 1);//参数1：移除的位置 参数2:移除的个数
         }
     };
+    //提取 json 字符串数据中某个属性，返回拼接字符串 逗号分隔
+    $scope.jsonToString = function (jsonString, key) {
+        var value = "";
+        var arr = JSON.parse(jsonString);
+        for (var id = 0; id < arr.length; id++) {
+            if (id != 0) {
+                value += ",";
+            }
+            value += arr[id][key];
+        }
+        return value;
+    }
 })
