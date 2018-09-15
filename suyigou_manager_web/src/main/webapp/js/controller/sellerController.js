@@ -72,9 +72,21 @@ app.controller('sellerController', function ($scope, $controller, sellerService)
         sellerService.search(page, rows, $scope.searchEntity).success(
             function (response) {
                 $scope.list = response.rows;
-                $scope.paginationConf.totalItems = response.total;//更新总记录数
+                $scope.paginationConf.totalItem = response.total;//更新总记录数
             }
         );
     }
 
+    //更新状态
+    $scope.updateStatus = function (sellerId, status) {
+        sellerService.updateStatus(sellerId, status).success(
+            function (response) {
+                if (response.success) {
+                    $scope.reloadList();//刷新列表
+                } else {
+                    alert(response.msg);
+                }
+            }
+        );
+    }
 });	

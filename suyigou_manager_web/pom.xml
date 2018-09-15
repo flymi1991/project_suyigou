@@ -30,6 +30,7 @@
                 <configuration>
                     <port>9101</port>
                     <uriEncoding>utf-8</uriEncoding>
+                    <path>/</path>
                 </configuration>
             </plugin>
         </plugins>

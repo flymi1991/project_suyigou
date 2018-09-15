@@ -39,6 +39,7 @@
                 <configuration>
                     <port>9001</port>
                     <uriEncoding>utf-8</uriEncoding>
+                    <path>/</path>
                 </configuration>
             </plugin>
             <plugin>

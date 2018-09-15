@@ -61,6 +61,18 @@ public class SellerController {
         }
     }
 
+    @RequestMapping("/updateStatus")
+    public ResultInfo updateStatus(String sellerId, String status) {
+        ResultInfo resultInfo;
+        try {
+            sellerService.updateStatus(sellerId, status);
+            resultInfo = new ResultInfo(true, "更改成功");
+        } catch (Exception e) {
+            resultInfo = new ResultInfo(false, "更改失败");
+        }
+        return resultInfo;
+    }
+
     /**
      * 修改
      *

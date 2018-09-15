@@ -50,7 +50,7 @@ public class TbSeller  implements Serializable {
 
     private String bankUser;
 
-    private String bankName;
+    private String bankName;//开户行名称
 
     public String getSellerId() {
         return sellerId;
