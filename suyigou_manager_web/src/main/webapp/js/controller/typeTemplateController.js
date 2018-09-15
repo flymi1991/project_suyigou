@@ -95,9 +95,6 @@ app.controller('typeTemplateController', function ($scope, $controller, typeTemp
         });
     }
 
-    //增加行
-    // TODO: 2018/9/14 16:53 增加行的操作 1.定义数组     2. 数组push
-
     $scope.entity = {customAttributeItems: []};
     $scope.addTableRow = function () {
         $scope.entity.customAttributeItems.push({});
