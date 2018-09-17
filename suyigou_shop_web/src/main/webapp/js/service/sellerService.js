@@ -1,5 +1,5 @@
 //服务层
-app.service('/sellerService', function ($http) {
+app.service('sellerService', function ($http) {
 
     //读取列表数据绑定到表单中
     this.findAll = function () {
@@ -31,7 +31,7 @@ app.service('/sellerService', function ($http) {
     }
 
     //显示当前用户名
-    this.showloginName = function () {
+    this.loginName = function () {
         return $http.get('/seller/name.do');
     };
 });

@@ -1,7 +1,16 @@
 //控制层
-app.controller('sellerController', function ($scope, $controller, sellerService) {
+app.controller('sellerController', function ($scope, $controller,sellerService) {
 
     $controller('baseController', {$scope: $scope});//继承
+
+    //读取当前登录人
+    $scope.loginName = function () {
+        sellerService.loginName().success(
+            function (response) {
+                $scope.loginName = response.loginName;
+            }
+        );
+    }
 
     //读取列表数据绑定到表单中  
     $scope.findAll = function () {

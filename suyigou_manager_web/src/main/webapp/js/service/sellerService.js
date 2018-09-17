@@ -38,4 +38,10 @@ app.service('sellerService', function ($http) {
     this.updateStatus = function (sellerId, status) {
         return $http.get('/seller/updateStatus.do?sellerId=' + sellerId + '&status=' + status);
     };
+
+    //显示用户名
+    this.loginName = function () {
+        alert(123);
+        return $http.get('/login/name.do');
+    }
 });
