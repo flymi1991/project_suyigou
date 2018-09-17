@@ -30,5 +30,8 @@ app.service('/sellerService', function ($http) {
         return $http.post('/seller/search.do?page=' + page + "&rows=" + rows, searchEntity);
     }
 
-
+    //显示当前用户名
+    this.showloginName = function () {
+        return $http.get('/seller/name.do');
+    };
 });

@@ -1,4 +1,4 @@
-package com.suyigou.manager.controller;
+package com.suyigou.shop.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.suyigou.pojo.TbBrand;

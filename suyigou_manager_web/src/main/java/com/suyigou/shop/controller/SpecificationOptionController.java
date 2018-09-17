@@ -1,8 +1,8 @@
-package com.suyigou.manager.controller;
+package com.suyigou.shop.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
-import com.suyigou.pojo.TbSeller;
-import com.suyigou.sellergoods.service.SellerService;
+import com.suyigou.pojo.TbSpecificationOption;
+import com.suyigou.sellergoods.service.SpecificationOptionService;
 import entity.PageResult;
 import entity.ResultInfo;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,11 +17,11 @@ import java.util.List;
  * @author Administrator
  */
 @RestController
-@RequestMapping("/seller")
-public class SellerController {
+@RequestMapping("/specificationOption")
+public class SpecificationOptionController {
 
     @Reference
-    private SellerService sellerService;
+    private SpecificationOptionService specificationOptionService;
 
     /**
      * 返回全部列表
@@ -29,8 +29,8 @@ public class SellerController {
      * @return
      */
     @RequestMapping("/findAll")
-    public List<TbSeller> findAll() {
-        return sellerService.findAll();
+    public List<TbSpecificationOption> findAll() {
+        return specificationOptionService.findAll();
     }
 
 
@@ -41,19 +41,19 @@ public class SellerController {
      */
     @RequestMapping("/findPage")
     public PageResult findPage(int page, int rows) {
-        return sellerService.findPage(page, rows);
+        return specificationOptionService.findPage(page, rows);
     }
 
     /**
      * 增加
      *
-     * @param seller
+     * @param specificationOption
      * @return
      */
     @RequestMapping("/add")
-    public ResultInfo add(@RequestBody TbSeller seller) {
+    public ResultInfo add(@RequestBody TbSpecificationOption specificationOption) {
         try {
-            sellerService.add(seller);
+            specificationOptionService.add(specificationOption);
             return new ResultInfo(true, "增加成功");
         } catch (Exception e) {
             e.printStackTrace();
@@ -61,28 +61,16 @@ public class SellerController {
         }
     }
 
-    @RequestMapping("/updateStatus")
-    public ResultInfo updateStatus(String sellerId, String status) {
-        ResultInfo resultInfo;
-        try {
-            sellerService.updateStatus(sellerId, status);
-            resultInfo = new ResultInfo(true, "更改成功");
-        } catch (Exception e) {
-            resultInfo = new ResultInfo(false, "更改失败");
-        }
-        return resultInfo;
-    }
-
     /**
      * 修改
      *
-     * @param seller
+     * @param specificationOption
      * @return
      */
     @RequestMapping("/update")
-    public ResultInfo update(@RequestBody TbSeller seller) {
+    public ResultInfo update(@RequestBody TbSpecificationOption specificationOption) {
         try {
-            sellerService.update(seller);
+            specificationOptionService.update(specificationOption);
             return new ResultInfo(true, "修改成功");
         } catch (Exception e) {
             e.printStackTrace();
@@ -97,8 +85,8 @@ public class SellerController {
      * @return
      */
     @RequestMapping("/findOne")
-    public TbSeller findOne(String id) {
-        return sellerService.findOne(id);
+    public TbSpecificationOption findOne(Long id) {
+        return specificationOptionService.findOne(id);
     }
 
     /**
@@ -108,9 +96,9 @@ public class SellerController {
      * @return
      */
     @RequestMapping("/delete")
-    public ResultInfo delete(String[] ids) {
+    public ResultInfo delete(Long[] ids) {
         try {
-            sellerService.delete(ids);
+            specificationOptionService.delete(ids);
             return new ResultInfo(true, "删除成功");
         } catch (Exception e) {
             e.printStackTrace();
@@ -121,14 +109,13 @@ public class SellerController {
     /**
      * 查询+分页
      *
-     * @param brand
      * @param page
      * @param rows
      * @return
      */
     @RequestMapping("/search")
-    public PageResult search(@RequestBody TbSeller seller, int page, int rows) {
-        return sellerService.findPage(seller, page, rows);
+    public PageResult search(@RequestBody TbSpecificationOption specificationOption, int page, int rows) {
+        return specificationOptionService.findPage(specificationOption, page, rows);
     }
 
 }

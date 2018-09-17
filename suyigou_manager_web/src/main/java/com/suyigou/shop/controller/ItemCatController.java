@@ -1,17 +1,15 @@
-package com.suyigou.manager.controller;
+package com.suyigou.shop.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
-import com.suyigou.pojo.TbSpecification;
-import com.suyigou.sellergoods.service.SpecificationService;
+import com.suyigou.pojo.TbItemCat;
+import com.suyigou.sellergoods.service.ItemCatService;
 import entity.PageResult;
 import entity.ResultInfo;
-import entity.Specification;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * controller
@@ -19,21 +17,21 @@ import java.util.Map;
  * @author Administrator
  */
 @RestController
-@RequestMapping("/specification")
-public class SpecificationController {
+@RequestMapping("/itemCat")
+public class ItemCatController {
+
+    @Reference
+    private ItemCatService itemCatService;
+
     /**
      * 返回全部列表
      *
      * @return
      */
     @RequestMapping("/findAll")
-    public List<TbSpecification> findAll() {
-        return specificationService.findAll();
+    public List<TbItemCat> findAll() {
+        return itemCatService.findAll();
     }
-
-
-    @Reference
-    private SpecificationService specificationService;
 
 
     /**
@@ -43,19 +41,19 @@ public class SpecificationController {
      */
     @RequestMapping("/findPage")
     public PageResult findPage(int page, int rows) {
-        return specificationService.findPage(page, rows);
+        return itemCatService.findPage(page, rows);
     }
 
     /**
      * 增加
      *
-     * @param specification
+     * @param itemCat
      * @return
      */
     @RequestMapping("/add")
-    public ResultInfo add(@RequestBody Specification specification) {
+    public ResultInfo add(@RequestBody TbItemCat itemCat) {
         try {
-            specificationService.add(specification);
+            itemCatService.add(itemCat);
             return new ResultInfo(true, "增加成功");
         } catch (Exception e) {
             e.printStackTrace();
@@ -66,13 +64,13 @@ public class SpecificationController {
     /**
      * 修改
      *
-     * @param specification
+     * @param itemCat
      * @return
      */
     @RequestMapping("/update")
-    public ResultInfo update(@RequestBody Specification specification) {
+    public ResultInfo update(@RequestBody TbItemCat itemCat) {
         try {
-            specificationService.update(specification);
+            itemCatService.update(itemCat);
             return new ResultInfo(true, "修改成功");
         } catch (Exception e) {
             e.printStackTrace();
@@ -87,8 +85,8 @@ public class SpecificationController {
      * @return
      */
     @RequestMapping("/findOne")
-    public Specification findOne(Long id) {
-        return specificationService.findOne(id);
+    public TbItemCat findOne(Long id) {
+        return itemCatService.findOne(id);
     }
 
     /**
@@ -100,7 +98,7 @@ public class SpecificationController {
     @RequestMapping("/delete")
     public ResultInfo delete(Long[] ids) {
         try {
-            specificationService.delete(ids);
+            itemCatService.delete(ids);
             return new ResultInfo(true, "删除成功");
         } catch (Exception e) {
             e.printStackTrace();
@@ -111,17 +109,14 @@ public class SpecificationController {
     /**
      * 查询+分页
      *
+     * @param itemCat
      * @param page
      * @param rows
      * @return
      */
     @RequestMapping("/search")
-    public PageResult search(@RequestBody TbSpecification specification, int page, int rows) {
-        return specificationService.findPage(specification, page, rows);
+    public PageResult search(@RequestBody TbItemCat itemCat, int page, int rows) {
+        return itemCatService.findPage(itemCat, page, rows);
     }
 
-    @RequestMapping("/selectOptionList")
-    public List<Map> selectOptionList() {
-        return specificationService.selectOptionList();
-    }
 }

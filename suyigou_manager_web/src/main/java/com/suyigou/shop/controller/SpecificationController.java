@@ -1,15 +1,17 @@
-package com.suyigou.manager.controller;
+package com.suyigou.shop.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
-import com.suyigou.pojo.TbGoods;
-import com.suyigou.sellergoods.service.GoodsService;
+import com.suyigou.pojo.TbSpecification;
+import com.suyigou.sellergoods.service.SpecificationService;
 import entity.PageResult;
 import entity.ResultInfo;
+import entity.Specification;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * controller
@@ -17,21 +19,21 @@ import java.util.List;
  * @author Administrator
  */
 @RestController
-@RequestMapping("/goods")
-public class GoodsController {
-
-    @Reference
-    private GoodsService goodsService;
-
+@RequestMapping("/specification")
+public class SpecificationController {
     /**
      * 返回全部列表
      *
      * @return
      */
     @RequestMapping("/findAll")
-    public List<TbGoods> findAll() {
-        return goodsService.findAll();
+    public List<TbSpecification> findAll() {
+        return specificationService.findAll();
     }
+
+
+    @Reference
+    private SpecificationService specificationService;
 
 
     /**
@@ -41,19 +43,19 @@ public class GoodsController {
      */
     @RequestMapping("/findPage")
     public PageResult findPage(int page, int rows) {
-        return goodsService.findPage(page, rows);
+        return specificationService.findPage(page, rows);
     }
 
     /**
      * 增加
      *
-     * @param goods
+     * @param specification
      * @return
      */
     @RequestMapping("/add")
-    public ResultInfo add(@RequestBody TbGoods goods) {
+    public ResultInfo add(@RequestBody Specification specification) {
         try {
-            goodsService.add(goods);
+            specificationService.add(specification);
             return new ResultInfo(true, "增加成功");
         } catch (Exception e) {
             e.printStackTrace();
@@ -64,13 +66,13 @@ public class GoodsController {
     /**
      * 修改
      *
-     * @param goods
+     * @param specification
      * @return
      */
     @RequestMapping("/update")
-    public ResultInfo update(@RequestBody TbGoods goods) {
+    public ResultInfo update(@RequestBody Specification specification) {
         try {
-            goodsService.update(goods);
+            specificationService.update(specification);
             return new ResultInfo(true, "修改成功");
         } catch (Exception e) {
             e.printStackTrace();
@@ -85,8 +87,8 @@ public class GoodsController {
      * @return
      */
     @RequestMapping("/findOne")
-    public TbGoods findOne(Long id) {
-        return goodsService.findOne(id);
+    public Specification findOne(Long id) {
+        return specificationService.findOne(id);
     }
 
     /**
@@ -98,7 +100,7 @@ public class GoodsController {
     @RequestMapping("/delete")
     public ResultInfo delete(Long[] ids) {
         try {
-            goodsService.delete(ids);
+            specificationService.delete(ids);
             return new ResultInfo(true, "删除成功");
         } catch (Exception e) {
             e.printStackTrace();
@@ -114,8 +116,12 @@ public class GoodsController {
      * @return
      */
     @RequestMapping("/search")
-    public PageResult search(@RequestBody TbGoods goods, int page, int rows) {
-        return goodsService.findPage(goods, page, rows);
+    public PageResult search(@RequestBody TbSpecification specification, int page, int rows) {
+        return specificationService.findPage(specification, page, rows);
     }
 
+    @RequestMapping("/selectOptionList")
+    public List<Map> selectOptionList() {
+        return specificationService.selectOptionList();
+    }
 }

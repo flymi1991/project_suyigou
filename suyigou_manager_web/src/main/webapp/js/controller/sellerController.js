@@ -3,6 +3,14 @@ app.controller('sellerController', function ($scope, $controller, sellerService)
 
     $controller('baseController', {$scope: $scope});//继承
 
+    //显示用户名
+    $scope.showName = function () {
+        sellerService.showName().success(
+            function (response) {
+                $scope.loginName = response.loginName;
+            })
+    }
+
     //读取列表数据绑定到表单中  
     $scope.findAll = function () {
         sellerService.findAll().success(
