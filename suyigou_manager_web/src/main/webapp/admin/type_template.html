@@ -87,7 +87,7 @@
                     </thead>
                     <tbody>
                         <tr ng-repeat="entity in list">
-                            <td><input type="checkbox" ng-click="changeDelList($event,entity.id)"></td>{{delList}}
+                            <td><input type="checkbox" ng-click="changeDelList($event,entity.id)"></td>
                             <td>{{entity.id}}</td>
                             <td>{{entity.name}}</td>
                             <td>{{jsonToString(entity.brandIds,"text")}}</td>

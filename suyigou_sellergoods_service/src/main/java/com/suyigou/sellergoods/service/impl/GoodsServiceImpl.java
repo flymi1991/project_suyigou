@@ -3,11 +3,13 @@ package com.suyigou.sellergoods.service.impl;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.suyigou.dao.TbGoodsDescMapper;
 import com.suyigou.dao.TbGoodsMapper;
 import com.suyigou.pojo.TbGoods;
 import com.suyigou.pojo.TbGoodsExample;
 import com.suyigou.pojo.TbGoodsExample.Criteria;
 import com.suyigou.sellergoods.service.GoodsService;
+import entity.Goods;
 import entity.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -23,6 +25,8 @@ public class GoodsServiceImpl implements GoodsService {
 
     @Autowired
     private TbGoodsMapper goodsMapper;
+    @Autowired
+    private TbGoodsDescMapper goodsDescMapper;
 
     /**
      * 查询全部
@@ -120,4 +124,11 @@ public class GoodsServiceImpl implements GoodsService {
         return new PageResult(page.getTotal(), page.getResult());
     }
 
+    @Override
+    public void add(Goods goods) {
+        goods.getGoods().setAuditStatus("0");
+        goodsMapper.insert(goods.getGoods());
+        goods.getGoodsDesc().setGoodsId(goods.getGoods().getId());
+        goodsDescMapper.insert(goods.getGoodsDesc());
+    }
 }

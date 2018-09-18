@@ -21,6 +21,7 @@ import java.util.List;
 @Service
 public class ItemCatServiceImpl implements ItemCatService {
 
+
     @Autowired
     private TbItemCatMapper itemCatMapper;
 
@@ -73,9 +74,18 @@ public class ItemCatServiceImpl implements ItemCatService {
     /**
      * 批量删除
      */
+    // 2018/9/18 9:57 根据parentId删除子类功能，改写mapper方法，根据parentId查找所有相关type，再行删除
+
     @Override
     public void delete(Long[] ids) {
+        List<Long> ids2 = null;
+        List<Long> ids_t = null;
         for (Long id : ids) {
+            //得到所有ids及其子类的id
+            ids_t = itemCatMapper.selectByParentId(id);// TODO: 2018/9/18 11:02 mybatis的映射有问题，返回结果不对
+            ids2.addAll(ids_t);
+        }
+        for (Long id : ids2) {
             itemCatMapper.deleteByPrimaryKey(id);
         }
     }
@@ -97,6 +107,15 @@ public class ItemCatServiceImpl implements ItemCatService {
 
         Page<TbItemCat> page = (Page<TbItemCat>) itemCatMapper.selectByExample(example);
         return new PageResult(page.getTotal(), page.getResult());
+    }
+
+    @Override
+    public List<TbItemCat> findByParentId(Long parentId) {
+        TbItemCatExample example = new TbItemCatExample();
+        Criteria criteria = example.createCriteria();
+        criteria.andParentIdEqualTo(parentId);
+        List<TbItemCat> tbItemCatList = itemCatMapper.selectByExample(example);
+        return tbItemCatList;
     }
 
 }

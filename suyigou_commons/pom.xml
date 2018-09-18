@@ -10,6 +10,14 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>suyigou_commons</artifactId>
     <packaging>jar</packaging>
-
-
+    <dependencies>
+        <dependency>
+            <groupId>org.csource.fastdfs</groupId>
+            <artifactId>fastdfs</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+        </dependency>
+    </dependencies>
 </project>

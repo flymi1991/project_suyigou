@@ -1,5 +1,5 @@
 //控制层
-app.controller('goodsController', function ($scope, $controller, goodsService) {
+app.controller('goodsController', function ($scope, $controller, goodsService,uploadService) {
 
     $controller('baseController', {$scope: $scope});//继承
 
@@ -33,6 +33,7 @@ app.controller('goodsController', function ($scope, $controller, goodsService) {
 
     //保存
     $scope.save = function () {
+        alert(12);
         var serviceObject;//服务层对象
         if ($scope.entity.id != null) {//如果有ID
             serviceObject = goodsService.update($scope.entity); //修改
@@ -46,6 +47,19 @@ app.controller('goodsController', function ($scope, $controller, goodsService) {
                     $scope.reloadList();//重新加载
                 } else {
                     alert(response.message);
+                }
+            }
+        );
+    }
+
+    //添加
+    $scope.add = function () {
+        $scope.entity.goodsDesc.introduce = editor.html();
+        goodsService.add($scope.entity).success(
+            function (response) {
+                if (!response.success) {
+                    $scope.entity = {};
+                    editor.html('');
                 }
             }
         );
@@ -65,6 +79,20 @@ app.controller('goodsController', function ($scope, $controller, goodsService) {
         );
     }
 
+    $scope.uploadFile = function () {
+        uploadService.uploadFile().success(
+            function (response) {
+                if (response.success) {
+                    $scope.image_entity.url = response.msg;
+                } else {
+                    alert(response.msg);
+                }
+            }
+        ).error(function (response) {
+            alert("上传发生错误");
+        })
+    }
+
     $scope.searchEntity = {};//定义搜索对象
 
     //搜索
@@ -77,4 +105,14 @@ app.controller('goodsController', function ($scope, $controller, goodsService) {
         );
     }
 
-});	
+    //定义实体结构
+    $scope.entity = {goods: {}, goodsDesc: {itemImages: []}};
+    $scope.addImageEntity = function () {
+        $scope.entity.goodsDesc.itemImages.push($scope.image_entity);
+    }
+
+    //删除
+    $scope.remove_image_entity=function(index){
+        $scope.entity.goodsDesc.itemImages.splice(index,1);
+    }
+});

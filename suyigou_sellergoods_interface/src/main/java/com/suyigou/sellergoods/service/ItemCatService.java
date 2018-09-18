@@ -33,7 +33,6 @@ public interface ItemCatService {
      */
     public void add(TbItemCat itemCat);
 
-
     /**
      * 修改
      */
@@ -65,4 +64,5 @@ public interface ItemCatService {
      */
     public PageResult findPage(TbItemCat itemCat, int pageNum, int pageSize);
 
+    List<TbItemCat> findByParentId(Long parentId);
 }

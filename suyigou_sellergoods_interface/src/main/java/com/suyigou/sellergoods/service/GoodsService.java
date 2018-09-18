@@ -1,6 +1,7 @@
 package com.suyigou.sellergoods.service;
 
 import com.suyigou.pojo.TbGoods;
+import entity.Goods;
 import entity.PageResult;
 
 import java.util.List;
@@ -33,6 +34,8 @@ public interface GoodsService {
      */
     public void add(TbGoods goods);
 
+
+    public void add(Goods goods);
 
     /**
      * 修改

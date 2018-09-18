@@ -41,7 +41,6 @@ app.service('sellerService', function ($http) {
 
     //显示用户名
     this.loginName = function () {
-        alert(123);
         return $http.get('/login/name.do');
     }
 });
