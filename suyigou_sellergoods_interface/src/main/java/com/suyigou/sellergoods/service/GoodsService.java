@@ -32,7 +32,6 @@ public interface GoodsService {
     /**
      * 增加
      */
-    public void add(TbGoods goods);
 
 
     public void add(Goods goods);

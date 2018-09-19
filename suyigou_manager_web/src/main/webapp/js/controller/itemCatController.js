@@ -37,11 +37,7 @@ app.controller('itemCatController', function ($scope, $controller, itemCatServic
             }
         );
     }
-    //查找父类
-    $scope.findParent = function (parentId) {
-        alert(123);
-    }
-    //读取列表数据绑定到表单中  
+    //读取列表数据绑定到表单中
     $scope.findAll = function () {
         itemCatService.findAll().success(
             function (response) {

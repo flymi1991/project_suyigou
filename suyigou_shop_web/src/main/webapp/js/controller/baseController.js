@@ -41,4 +41,28 @@ app.controller("baseController", function ($scope) {
         }
         return value;
     }
+    //判断集合中是否包含某个元素
+    /*
+    需求：
+    集合：[{"attributeName":"网络制式","attributeValue":["移动4G"]},{"attributeName":"屏幕尺寸","attributeValue":["5.5寸","4.5寸"]}]
+    判断集合中的是否包含attributeName为"网络制式"的选项
+    */
+    //老师的方法
+    $scope.searchObjectByKey = function (list, key, value) {
+        for (var i = 0; i < list.length; i++) {
+            if (list[i][key] == value) {
+                return list[i];
+            }
+        }
+        return null;
+    }
+    //我的方法
+    $scope.searchObjectByKey1 = function (list, key, value) {
+        for (var element in list) {
+            if (element[key] == value) {
+                return element;
+            }
+        }
+        return null;
+    }
 })

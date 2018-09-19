@@ -1,19 +1,20 @@
 package com.suyigou.sellergoods.service.impl;
 
 import com.alibaba.dubbo.config.annotation.Service;
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.suyigou.dao.TbGoodsDescMapper;
-import com.suyigou.dao.TbGoodsMapper;
-import com.suyigou.pojo.TbGoods;
-import com.suyigou.pojo.TbGoodsExample;
+import com.suyigou.dao.*;
+import com.suyigou.pojo.*;
 import com.suyigou.pojo.TbGoodsExample.Criteria;
 import com.suyigou.sellergoods.service.GoodsService;
 import entity.Goods;
 import entity.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 服务实现层
@@ -27,6 +28,12 @@ public class GoodsServiceImpl implements GoodsService {
     private TbGoodsMapper goodsMapper;
     @Autowired
     private TbGoodsDescMapper goodsDescMapper;
+    @Autowired
+    private TbBrandMapper brandMapper;
+    @Autowired
+    private TbSellerMapper sellerMapper;
+    @Autowired
+    private TbItemMapper itemMapper;
 
     /**
      * 查询全部
@@ -44,14 +51,6 @@ public class GoodsServiceImpl implements GoodsService {
         PageHelper.startPage(pageNum, pageSize);
         Page<TbGoods> page = (Page<TbGoods>) goodsMapper.selectByExample(null);
         return new PageResult(page.getTotal(), page.getResult());
-    }
-
-    /**
-     * 增加
-     */
-    @Override
-    public void add(TbGoods goods) {
-        goodsMapper.insert(goods);
     }
 
 
@@ -126,9 +125,39 @@ public class GoodsServiceImpl implements GoodsService {
 
     @Override
     public void add(Goods goods) {
+        //插入TbGoods表
         goods.getGoods().setAuditStatus("0");
         goodsMapper.insert(goods.getGoods());
+        //插入TbGoodsDesc表
         goods.getGoodsDesc().setGoodsId(goods.getGoods().getId());
         goodsDescMapper.insert(goods.getGoodsDesc());
+        //插入TbItem表
+        List<TbItem> itemList = goods.getItemList();
+        for (TbItem item : itemList) {
+            item.setCreateTime(new Date());
+            item.setUpdateTime(new Date());
+            item.setGoodsId(goods.getGoods().getId());
+            String title = goods.getGoods().getGoodsName();
+            Map<String, Object> map = JSON.parseObject(item.getSpec());
+            for (String key : map.keySet()) {
+                Object value = map.get(key);
+                title += " " + value;
+            }
+            item.setTitle(title);
+            String sellerId = goods.getGoods().getSellerId();
+            TbSeller seller = sellerMapper.selectByPrimaryKey(sellerId);
+            item.setSeller(seller.getNickName());
+            item.setCategoryid(goods.getGoods().getCategory3Id());
+            Long brandId = goods.getGoods().getBrandId();
+            TbBrand brand = brandMapper.selectByPrimaryKey(brandId);
+            item.setBrand(brand.getName());
+            String itemImages = goods.getGoodsDesc().getItemImages();
+            List<Map> imgList = JSON.parseArray(itemImages, Map.class);
+            if (imgList.size() > 0) {
+                String url = (String)(imgList.get(0).get("url"));
+                item.setImage(url);
+            }
+            itemMapper.insert(item);
+        }
     }
 }
