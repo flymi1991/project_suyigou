@@ -1,5 +1,5 @@
 //控制层
-app.controller('goodsController', function ($scope, $controller, goodsService, uploadService, itemCatService, typeTemplateService) {
+app.controller('goodsController', function ($scope, $controller, $location, goodsService, uploadService, itemCatService, typeTemplateService) {
 
     $controller('baseController', {$scope: $scope});//继承
 
@@ -12,6 +12,16 @@ app.controller('goodsController', function ($scope, $controller, goodsService, u
             customAttributeItems: []//自定义属性
         }
     }
+
+    //定义搜索对象
+    $scope.searchEntity = {};
+
+    //商品状态
+
+    $scope.status = ['未审核', '已审核', '审核未通过', '关闭'];
+
+    //定义品牌列表
+    $scope.itemCatList = [];
 
     //读取列表数据绑定到表单中  
     $scope.findAll = function () {
@@ -30,21 +40,37 @@ app.controller('goodsController', function ($scope, $controller, goodsService, u
                 $scope.paginationConf.totalItems = response.total;//更新总记录数
             }
         );
-    }
+    };
 
     //查询实体
-    $scope.findOne = function (id) {
-        goodsService.findOne(id).success(
-            function (response) {
-                $scope.entity = response;
-            }
-        );
-    }
+    $scope.findOne = function () {
+        if (goodsId) {
+            goodsService.findOne(goodsId).success(
+                function (response) {
+                    $scope.entity = response;
+                    //回写富文本
+                    editor.html($scope.entity.goodsDesc.introduction);
+                    //回写图片
+                    $scope.entity.goodsDesc.itemImages = JSON.parse($scope.entity.goodsDesc.itemImages);
+                    //扩展属性
+                    $scope.entity.goodsDesc.customAttributeItems = JSON.parse($scope.entity.goodsDesc.customAttributeItems);
+                    //规格
+                    $scope.entity.goodsDesc.specificationItems = JSON.parse($scope.entity.goodsDesc.specificationItems);
+                    //SKU表
+                    for (var i = 0; i < $scope.entity.itemList.length; i++) {
+                        $scope.entity.itemList[i].spec = JSON.parse($scope.entity.itemList[i].spec);
+                    }
+                }
+            );
+        }
+    };
 
     //保存
     $scope.save = function () {
+        //提取文本编辑器的值
+        $scope.entity.goodsDesc.introduction = editor.html();
         var serviceObject;//服务层对象
-        if ($scope.entity.id != null) {//如果有ID
+        if ($scope.entity.goods.id != null) {//如果有ID
             serviceObject = goodsService.update($scope.entity); //修改
         } else {
             serviceObject = goodsService.add($scope.entity);//增加
@@ -52,18 +78,28 @@ app.controller('goodsController', function ($scope, $controller, goodsService, u
         serviceObject.success(
             function (response) {
                 if (response.success) {
+                    $editor.html('');//将富文本初始化
+                    //首先定义实体结构
+                    $scope.entity = {
+                        goods: {},
+                        goodsDesc: {
+                            itemImages: [],//图片
+                            specificationItems: [],//规格列表
+                            customAttributeItems: []//自定义属性
+                        }
+                    };//将实体初始化
                     //重新查询
-                    $scope.reloadList();//重新加载
+                    location.href = 'goods.html';
                 } else {
                     alert(response.message);
                 }
             }
         );
-    }
+    };
 
     //添加
     $scope.add = function () {
-        $scope.entity.goodsDesc.introduce = editor.html();
+        $scope.entity.goodsDesc.introduction = editor.html();
         goodsService.add($scope.entity).success(
             function (response) {
                 if (!response.success) {
@@ -72,7 +108,7 @@ app.controller('goodsController', function ($scope, $controller, goodsService, u
                 }
             }
         );
-    }
+    };
 
 
     //批量删除
@@ -85,7 +121,7 @@ app.controller('goodsController', function ($scope, $controller, goodsService, u
                     $scope.selectIds = [];
                 }
             }
-        );
+        )
     }
 
     $scope.uploadFile = function () {
@@ -102,9 +138,10 @@ app.controller('goodsController', function ($scope, $controller, goodsService, u
         })
     }
 
-    $scope.searchEntity = {};//定义搜索对象
 
     //搜索
+    // TODO: 2018/9/20 0:19 分页有问题
+    // DONE: paginationConf变量名错误，跟代码生成器中的不一致
     $scope.search = function (page, rows) {
         goodsService.search(page, rows, $scope.searchEntity).success(
             function (response) {
@@ -112,6 +149,17 @@ app.controller('goodsController', function ($scope, $controller, goodsService, u
                 $scope.paginationConf.totalItems = response.total;//更新总记录数
             }
         );
+    }
+    $scope.findItemCatList = function () {
+        itemCatService.findAll().success(
+            function (response) {
+                for (var i = 0; i < response.length; i++) {
+                    var itemCat = response[i];
+                    $scope.itemCatList[itemCat.id] = itemCat.name;
+                }
+                console.log($scope.paginationConf);
+            }
+        )
     }
 
 
@@ -136,31 +184,47 @@ app.controller('goodsController', function ($scope, $controller, goodsService, u
     }
     //监听第1级下拉框，改变第2级下拉框
     $scope.$watch('entity.goods.category1Id', function (newValue, oldValue) {
-        $scope.entity.goods.category2_id = "";
+        if (!goodsId) {
+            //如果地址栏id值为空，才重置
+            $scope.entity.goods.category2Id = "";
+        }
         if (newValue) {
             itemCatService.findByParentId(newValue).success(
                 function (response) {
                     $scope.itemCatList_2 = response;
+                    $scope.itemCatList_3 = [];
                 }
             )
         }
     })
 
     //监听第2级下拉框，改变第3级下拉框
-    $scope.$watch('entity.goods.category2_id', function (newValue, oldValue) {
-        $scope.entity.goods.category3_id = "";
+    var goodsId = $location.search()['id'];
+    $scope.$watch('entity.goods.category2Id', function (newValue, oldValue) {
+        if (!goodsId) {
+            //如果地址栏id值为空，才重置
+            $scope.entity.goods.category3Id = "";
+        }
         if (newValue) {//
             itemCatService.findByParentId(newValue).success(
                 function (response) {
+                    // TODO: 2018/9/20 14:47 如果是修改数据，则不应该将数据置为空
                     $scope.itemCatList_3 = response;
+                    if (!goodsId) {
+                        $scope.entity.goods.category3Id = "";
+                    }
                 }
             )
         }
-    })
+    });
 
     //监听第3级下拉框，改变模板
-    $scope.$watch('entity.goods.category3_id', function (newValue, oldValue) {
-        $scope.entity.goods.typeTemplateId = "";
+    $scope.$watch('entity.goods.category3Id', function (newValue, oldValue) {
+
+        if (!goodsId) {
+            //如果地址栏id值为空，才重置
+            $scope.entity.goods.typeTemplateId = "";
+        }
         if (newValue) {
             itemCatService.findOne(newValue).success(
                 function (response) {
@@ -172,14 +236,19 @@ app.controller('goodsController', function ($scope, $controller, goodsService, u
 
     //监听模板ID，改变品牌和扩展属性
     $scope.$watch('entity.goods.typeTemplateId', function (newValue, oldValue) {
-        $scope.entity.goodsDesc.specificationItems = [];
-        $scope.entity.goodsDesc.customAttributeItems = [];
+        if (!goodsId) {
+            //如果地址栏id值为空，才重置
+            $scope.entity.goodsDesc.specificationItems = [];
+            $scope.entity.goodsDesc.customAttributeItems = [];
+        }
         if (newValue) {
             typeTemplateService.findOne(newValue).success(
                 function (response) {
                     $scope.typeTemplate = response;
                     $scope.typeTemplate.brandList = JSON.parse($scope.typeTemplate.brandIds);
-                    $scope.entity.goodsDesc.customAttributeItems = JSON.parse($scope.typeTemplate.customAttributeItems);
+                    if ($scope.entity.goods.typeTemplateId != newValue) {
+                        $scope.entity.goodsDesc.customAttributeItems = JSON.parse($scope.typeTemplate.customAttributeItems);
+                    }
                 }
             )
             typeTemplateService.findSpecList(newValue).success(
@@ -189,7 +258,7 @@ app.controller('goodsController', function ($scope, $controller, goodsService, u
                 }
             )
         }
-    })
+    });
 
     /*
         需求：
@@ -197,6 +266,7 @@ app.controller('goodsController', function ($scope, $controller, goodsService, u
         判断集合中的是否包含attributeName为"网络制式"的选项
     */
     $scope.changeSpecOption = function ($event, specName, specOption) {
+
         var object = $scope.searchObjectByKey($scope.entity.goodsDesc.specificationItems, "attributeName", specName)
         //判断是否已经存在
         if (object) {
@@ -257,5 +327,16 @@ app.controller('goodsController', function ($scope, $controller, goodsService, u
             }
         }
         return newList;
+    }
+
+    //判断复选框是否选中
+    $scope.checkAttributeValue = function (text, optionName) {
+
+        var items = $scope.entity.goodsDesc.specificationItems;
+        var obj = $scope.searchObjectByKey(items, "attributeName", text);
+        if ((obj != null) && (obj['attributeValue'].indexOf(optionName) >= 0)) {
+            //存在text规格(比如内存大小)
+            return true;
+        }
     }
 })

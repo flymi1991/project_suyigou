@@ -72,13 +72,23 @@ public class GoodsController {
      * @return
      */
     @RequestMapping("/update")
-    public ResultInfo update(@RequestBody TbGoods goods) {
-        try {
-            goodsService.update(goods);
-            return new ResultInfo(true, "修改成功");
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResultInfo(false, "修改失败");
+    public ResultInfo update(@RequestBody Goods goods) {
+        Goods goods2 = goodsService.findOne(goods.getGoods().getId());
+        String sellerId = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        if (goods2.getGoods().getId().equals(goods.getGoods().getId())//goodId与数据库相匹配
+                &&
+                goods2.getGoods().getSellerId().equals(sellerId))//sellerId与数据库相匹配
+        {
+            try {
+                goodsService.update(goods);
+                return new ResultInfo(true, "修改成功");
+            } catch (Exception e) {
+                e.printStackTrace();
+                return new ResultInfo(false, "修改失败");
+            }
+        } else {
+            return new ResultInfo(false, "操作非法");
         }
     }
 
@@ -89,7 +99,7 @@ public class GoodsController {
      * @return
      */
     @RequestMapping("/findOne")
-    public TbGoods findOne(Long id) {
+    public Goods findOne(Long id) {
         return goodsService.findOne(id);
     }
 
@@ -119,6 +129,8 @@ public class GoodsController {
      */
     @RequestMapping("/search")
     public PageResult search(@RequestBody TbGoods goods, int page, int rows) {
+        String sellerId = SecurityContextHolder.getContext().getAuthentication().getName();
+        goods.setSellerId(sellerId);
         return goodsService.findPage(goods, page, rows);
     }
 

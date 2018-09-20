@@ -11,6 +11,7 @@ import com.suyigou.sellergoods.service.GoodsService;
 import entity.Goods;
 import entity.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -22,6 +23,7 @@ import java.util.Map;
  * @author Administrator
  */
 @Service
+@Transactional
 public class GoodsServiceImpl implements GoodsService {
 
     @Autowired
@@ -58,8 +60,20 @@ public class GoodsServiceImpl implements GoodsService {
      * 修改
      */
     @Override
-    public void update(TbGoods goods) {
-        goodsMapper.updateByPrimaryKey(goods);
+    public void update(Goods goods) {
+        goods.getGoods().setAuditStatus("0");//设置未申请状态:如果是经过修改的商品，需要重新设置状态
+        goodsMapper.updateByPrimaryKey(goods.getGoods());
+        goodsDescMapper.updateByPrimaryKey(goods.getGoodsDesc());
+        //删除原有的 sku 列表数据
+        TbItemExample example=new TbItemExample();
+        com.suyigou.pojo.TbItemExample.Criteria criteria = example.createCriteria();
+        criteria.andGoodsIdEqualTo(goods.getGoods().getId());
+        itemMapper.deleteByExample(example);
+        //插入新的数据
+        List<TbItem> itemList = goods.getItemList();
+        for (TbItem item : itemList) {
+            itemMapper.insert(item);
+        }
     }
 
     /**
@@ -69,8 +83,16 @@ public class GoodsServiceImpl implements GoodsService {
      * @return
      */
     @Override
-    public TbGoods findOne(Long id) {
-        return goodsMapper.selectByPrimaryKey(id);
+    public Goods findOne(Long id) {
+        Goods goods = new Goods();
+        goods.setGoods(goodsMapper.selectByPrimaryKey(id));
+        goods.setGoodsDesc(goodsDescMapper.selectByPrimaryKey(id));
+        TbItemExample example = new TbItemExample();
+        TbItemExample.Criteria criteria = example.createCriteria();
+        criteria.andGoodsIdEqualTo(goods.getGoods().getId());
+        List<TbItem> itemList = itemMapper.selectByExample(example);
+        goods.setItemList(itemList);
+        return goods;
     }
 
     /**
@@ -79,7 +101,9 @@ public class GoodsServiceImpl implements GoodsService {
     @Override
     public void delete(Long[] ids) {
         for (Long id : ids) {
-            goodsMapper.deleteByPrimaryKey(id);
+            TbGoods goods = goodsMapper.selectByPrimaryKey(id);
+            goods.setIsDelete("1");
+            goodsMapper.updateByPrimaryKey(goods);
         }
     }
 
@@ -87,13 +111,13 @@ public class GoodsServiceImpl implements GoodsService {
     @Override
     public PageResult findPage(TbGoods goods, int pageNum, int pageSize) {
         PageHelper.startPage(pageNum, pageSize);
-
         TbGoodsExample example = new TbGoodsExample();
         Criteria criteria = example.createCriteria();
-
+        criteria.andIsDeleteIsNotNull();
         if (goods != null) {
             if (goods.getSellerId() != null && goods.getSellerId().length() > 0) {
-                criteria.andSellerIdLike("%" + goods.getSellerId() + "%");
+                //criteria.andSellerIdLike("%" + goods.getSellerId() + "%");
+                criteria.andSellerIdEqualTo(goods.getSellerId());
             }
             if (goods.getGoodsName() != null && goods.getGoodsName().length() > 0) {
                 criteria.andGoodsNameLike("%" + goods.getGoodsName() + "%");
@@ -133,31 +157,33 @@ public class GoodsServiceImpl implements GoodsService {
         goodsDescMapper.insert(goods.getGoodsDesc());
         //插入TbItem表
         List<TbItem> itemList = goods.getItemList();
-        for (TbItem item : itemList) {
-            item.setCreateTime(new Date());
-            item.setUpdateTime(new Date());
-            item.setGoodsId(goods.getGoods().getId());
-            String title = goods.getGoods().getGoodsName();
-            Map<String, Object> map = JSON.parseObject(item.getSpec());
-            for (String key : map.keySet()) {
-                Object value = map.get(key);
-                title += " " + value;
+        if (itemList != null && itemList.size() != 0) {
+            for (TbItem item : itemList) {
+                item.setCreateTime(new Date());
+                item.setUpdateTime(new Date());
+                item.setGoodsId(goods.getGoods().getId());
+                String title = goods.getGoods().getGoodsName();
+                Map<String, Object> map = JSON.parseObject(item.getSpec());
+                for (String key : map.keySet()) {
+                    Object value = map.get(key);
+                    title += " " + value;
+                }
+                item.setTitle(title);
+                String sellerId = goods.getGoods().getSellerId();
+                TbSeller seller = sellerMapper.selectByPrimaryKey(sellerId);
+                item.setSeller(seller.getNickName());
+                item.setCategoryid(goods.getGoods().getCategory3Id());
+                Long brandId = goods.getGoods().getBrandId();
+                TbBrand brand = brandMapper.selectByPrimaryKey(brandId);
+                item.setBrand(brand.getName());
+                String itemImages = goods.getGoodsDesc().getItemImages();
+                List<Map> imgList = JSON.parseArray(itemImages, Map.class);
+                if (imgList.size() > 0) {
+                    String url = (String)(imgList.get(0).get("url"));
+                    item.setImage(url);
+                }
+                itemMapper.insert(item);
             }
-            item.setTitle(title);
-            String sellerId = goods.getGoods().getSellerId();
-            TbSeller seller = sellerMapper.selectByPrimaryKey(sellerId);
-            item.setSeller(seller.getNickName());
-            item.setCategoryid(goods.getGoods().getCategory3Id());
-            Long brandId = goods.getGoods().getBrandId();
-            TbBrand brand = brandMapper.selectByPrimaryKey(brandId);
-            item.setBrand(brand.getName());
-            String itemImages = goods.getGoodsDesc().getItemImages();
-            List<Map> imgList = JSON.parseArray(itemImages, Map.class);
-            if (imgList.size() > 0) {
-                String url = (String)(imgList.get(0).get("url"));
-                item.setImage(url);
-            }
-            itemMapper.insert(item);
         }
     }
 }
