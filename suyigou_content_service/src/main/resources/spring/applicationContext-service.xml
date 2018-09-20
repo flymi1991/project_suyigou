@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+    <!--自己占用的端口，每个端口不能重复-->
+    <dubbo:protocol name="dubbo" port="20882"></dubbo:protocol>
+
+    <dubbo:application name="suyigou-content-service"/>
+    <dubbo:registry address="zookeeper://192.168.25.135:2181"/>
+    <dubbo:annotation package="com.suyigou.content.service.impl"/>
+</beans>

@@ -16,6 +16,8 @@
         <module>suyigou_sellergoods_service</module>
         <module>suyigou_manager_web</module>
         <module>suyigou_shop_web</module>
+        <module>suyigou_content_interface</module>
+        <module>suyigou_content_service</module>
     </modules>
 
     <!-- 集中定义依赖版本号 -->

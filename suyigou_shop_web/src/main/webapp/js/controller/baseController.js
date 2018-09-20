@@ -2,7 +2,7 @@ app.controller("baseController", function ($scope) {
     $scope.entity = {};
     //定义分页参数对象
     $scope.paginationConf = {
-        curPage: 1,
+        currentPage: 1,
         itemsPerPage: 3,
         totalItems: 8,
         perPageOptions: [3, 6, 9],
@@ -14,7 +14,7 @@ app.controller("baseController", function ($scope) {
 
     //重新加载页面
     $scope.reloadList = function () {
-        $scope.search($scope.paginationConf.curPage, $scope.paginationConf.itemsPerPage, $scope.searchEntity);
+        $scope.search($scope.paginationConf.currentPage, $scope.paginationConf.itemsPerPage, $scope.searchEntity);
     };
 
     //删除复选框
@@ -52,15 +52,6 @@ app.controller("baseController", function ($scope) {
         for (var i = 0; i < list.length; i++) {
             if (list[i][key] == value) {
                 return list[i];
-            }
-        }
-        return null;
-    }
-    //我的方法
-    $scope.searchObjectByKey1 = function (list, key, value) {
-        for (var element in list) {
-            if (element[key] == value) {
-                return element;
             }
         }
         return null;

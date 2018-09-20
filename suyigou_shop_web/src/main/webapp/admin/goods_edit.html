@@ -10,26 +10,26 @@
         <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
         <meta http-equiv="Content-Type" content="multipart/form-data; charset=utf-8">
 
-        <link rel="stylesheet" href="/plugins/bootstrap/css/bootstrap.min.css">
-        <link rel="stylesheet" href="/plugins/adminLTE/css/AdminLTE.css">
-        <link rel="stylesheet" href="/plugins/adminLTE/css/skins/_all-skins.min.css">
-        <link rel="stylesheet" href="/css/style.css">
-        <script src="/plugins/jQuery/jquery-2.2.3.min.js"></script>
-        <script src="/plugins/bootstrap/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="../plugins/bootstrap/css/bootstrap.min.css">
+        <link rel="stylesheet" href="../plugins/adminLTE/css/AdminLTE.css">
+        <link rel="stylesheet" href="../plugins/adminLTE/css/skins/_all-skins.min.css">
+        <link rel="stylesheet" href="../css/style.css">
+        <script src="../plugins/jQuery/jquery-2.2.3.min.js"></script>
+        <script src="../plugins/bootstrap/js/bootstrap.min.js"></script>
 
         <!-- 富文本编辑器 -->
-        <link rel="stylesheet" href="/plugins/kindeditor/themes/default/default.css"/>
-        <script charset="utf-8" src="/plugins/kindeditor/kindeditor-min.js"></script>
-        <script charset="utf-8" src="/plugins/kindeditor/lang/zh_CN.js"></script>
+        <link rel="stylesheet" href="../plugins/kindeditor/themes/default/default.css"/>
+        <script charset="utf-8" src="../plugins/kindeditor/kindeditor-min.js"></script>
+        <script charset="utf-8" src="../plugins/kindeditor/lang/zh_CN.js"></script>
 
-        <script src="/plugins/angularjs/angular.min.js"></script>
-        <script src="/js/commons/base.js"></script>
-        <script src="/js/service/goodsService.js"></script>
-        <script src="/js/service/uploadService.js"></script>
-        <script src="/js/service/itemCatService.js"></script>
-        <script src="/js/service/typeTemplateService.js"></script>
-        <script src="/js/controller/baseController.js"></script>
-        <script src="/js/controller/goodsController.js"></script>
+        <script src="../plugins/angularjs/angular.min.js"></script>
+        <script src="../js/commons/base.js"></script>
+        <script src="../js/service/goodsService.js"></script>
+        <script src="../js/service/uploadService.js"></script>
+        <script src="../js/service/itemCatService.js"></script>
+        <script src="../js/service/typeTemplateService.js"></script>
+        <script src="../js/controller/baseController.js"></script>
+        <script src="../js/controller/goodsController.js"></script>
 
         <script type="text/javascript">
             var editor;
@@ -42,7 +42,8 @@
 
     </head>
 
-    <body class="hold-transition skin-red sidebar-mini" ng-app="suyigou" ng-controller="goodsController" ng-init="findItemCatList1()">
+    <body class="hold-transition skin-red sidebar-mini" ng-app="suyigou"
+          ng-controller="goodsController" ng-init="findItemCatList1();findOne()">
 
         <!-- 正文区域 -->
         <section class="content">
@@ -85,10 +86,10 @@
                                                 </select>
                                             </td>
                                             <td>
-                                                <select class="form-control select-sm" ng-model="entity.goods.category2_id" ng-options="itemCat.id as itemCat.name for itemCat in itemCatList_2"></select>
+                                                <select class="form-control select-sm" ng-model="entity.goods.category2Id" ng-options="itemCat.id as itemCat.name for itemCat in itemCatList_2"></select>
                                             </td>
                                             <td>
-                                                <select class="form-control select-sm" ng-model="entity.goods.category3_id" ng-options="itemCat.id as itemCat.name for itemCat in itemCatList_3"></select>
+                                                <select class="form-control select-sm" ng-model="entity.goods.category3Id" ng-options="itemCat.id as itemCat.name for itemCat in itemCatList_3"></select>
                                             </td>
                                             <td>
                                                 模板ID:{{entity.goods.typeTemplateId}}
@@ -208,7 +209,9 @@
                                         <div class="col-md-2 title">{{spec.text}}</div>
                                         <div class="col-md-10 data">
 					                            <span ng-repeat="option in spec.optionList">
-					                            	<input type="checkbox" ng-click="changeSpecOption($event,spec.text,option.optionName);createItemList()">{{option.optionName}}
+					                            	<input type="checkbox"
+                                                           ng-checked="checkAttributeValue(spec.text,option.optionName)"
+                                                           ng-click="changeSpecOption($event,spec.text,option.optionName);createItemList()">{{option.optionName}}
 					                            </span>
                                         </div>
                                     </div>
@@ -220,8 +223,8 @@
                                     <table class="table table-bordered table-striped table-hover dataTable">
                                         <thead>
                                             <tr>
-                                                <th class="sorting" ng-repeat="specification in entity.goodsDesc.specificationItems">
-                                                    {{specification.attributeName}}
+                                                <th class="sorting" ng-repeat="specification1 in entity.goodsDesc.specificationItems">
+                                                    {{specification1.attributeName}}
                                                 </th>
                                                 <th class="sorting">价格</th>
                                                 <th class="sorting">库存</th>
@@ -231,8 +234,8 @@
                                         </thead>
                                         <tbody>
                                             <tr ng-repeat="item in entity.itemList">
-                                                <td ng-repeat="specification in entity.goodsDesc.specificationItems">
-                                                    {{item.spec[specification.attributeName]}}
+                                                <td ng-repeat="specification0 in entity.goodsDesc.specificationItems">
+                                                    {{item.spec[specification0.attributeName]}}
                                                 </td>
                                                 <td>
                                                     <input class="form-control" placeholder="价格" ng-model="item.price">
@@ -264,8 +267,9 @@
 
             </div>
             <div class="btn-toolbar list-toolbar">
-                <button class="btn btn-primary" ng-click="add()"><i class="fa fa-save"></i>保存</button>
+                <button class="btn btn-primary" ng-click="save()"><i class="fa fa-save"></i>保存</button>
                 <button class="btn btn-default">返回列表</button>
+                <a href="goods.html" class="btn btn-default">返回列表</a>
             </div>
 
         </section>
