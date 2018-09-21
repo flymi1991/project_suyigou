@@ -1,6 +1,7 @@
 package com.suyigou.manager.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
+import com.suyigou.content.service.ContentCategoryService;
 import com.suyigou.content.service.ContentService;
 import com.suyigou.pojo.TbContent;
 import entity.PageResult;
@@ -18,10 +19,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/content")
 public class ContentController {
-
 	@Reference
 	private ContentService contentService;
-	
+	@Reference
+	private ContentCategoryService contentCategoryService;
+
+
 	/**
 	 * 返回全部列表
 	 * @return

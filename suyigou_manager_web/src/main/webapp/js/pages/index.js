@@ -132,7 +132,7 @@ var getyxl = jQuery('#picLBxxl li').eq(0).width();
         /*找到每个li*/
         this.current = 0;
         this.myTimersc = '';
-        this.init()
+        this.initEntity()
     }
     das.prototype = {
         chgPic: function (n) {
@@ -162,7 +162,7 @@ var getyxl = jQuery('#picLBxxl li').eq(0).width();
                 rotateElement(getBnts, tt);
             }, 25)
         },
-        init: function () {
+        initEntity: function () {
             var _this = this;
             this.bnt.bind("click", function () {
                 _this.current++;

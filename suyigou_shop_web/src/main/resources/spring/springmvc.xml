@@ -35,6 +35,7 @@
     <!--配置多媒体解析器-->
     <bean class="org.springframework.web.multipart.commons.CommonsMultipartResolver" id="multipartResolver">
         <property name="defaultEncoding" value="utf-8"></property>
-        <property name="maxUploadSize" value="1048576"></property>
+        <!-- 设定文件上传的最大值 5MB，5*1024*1024 -->
+        <property name="maxUploadSize" value="5242880"></property>
     </bean>
 </beans>

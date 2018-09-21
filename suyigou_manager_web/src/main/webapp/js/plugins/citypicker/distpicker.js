@@ -38,13 +38,13 @@
         this.options = $.extend({}, Distpicker.DEFAULTS, $.isPlainObject(options) && options);
         this.placeholders = $.extend({}, Distpicker.DEFAULTS);
         this.active = false;
-        this.init();
+        this.initEntity();
     }
 
     Distpicker.prototype = {
         constructor: Distpicker,
 
-        init: function () {
+        initEntity: function () {
             var options = this.options;
             var $select = this.$element.find('select');
             var length = $select.length;

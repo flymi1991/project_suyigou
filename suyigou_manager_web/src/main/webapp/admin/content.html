@@ -15,9 +15,20 @@
         <script src="../plugins/jQuery/jquery-2.2.3.min.js"></script>
         <script src="../plugins/bootstrap/js/bootstrap.min.js"></script>
 
+        <script src="../plugins/angularjs/angular.min.js"></script>
+
+        <script src="../js/commons/base.js"></script>
+
+        <script src="../js/service/uploadService.js"></script>
+        <script src="../js/service/contentService.js"></script>
+        <script src="../js/service/contentCategoryService.js"></script>
+
+        <script src="../js/controller/baseController.js"></script>
+        <script src="../js/controller/contentController.js"></script>
     </head>
 
-    <body class="hold-transition skin-red sidebar-mini">
+    <body class="hold-transition skin-red sidebar-mini"
+          ng-app="suyigou" ng-controller="contentController" ng-init="findAll();findContentCategoryList()">
         <!-- .box-body -->
 
         <div class="box-header with-border">
@@ -66,17 +77,17 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
+                        <tr ng-repeat="entity in list">
                             <td><input type="checkbox"></td>
-                            <td>1</td>
-                            <td>1</td>
-                            <td>促销海报1</td>
-                            <td>http://wwww.hb.com/hd1.html</td>
+                            <td>{{entity.id}}</td>
+                            <td>{{entity.categoryId}}</td>
+                            <td>{{entity.title}}</td>
+                            <td>{{entity.url}}</td>
                             <td>
-                                <img alt="" src="" width="100px" height="50px">
+                                <img alt="广告图" ng-src="{{entity.pic}}" width="100px" height="50px">
                             </td>
-                            <td>1</td>
-                            <td>有效</td>
+                            <td>{{entity.sortOrder}}</td>
+                            <td>{{contentStatus[entity.status]}}</td>
                             <td class="text-center">
                                 <button type="button" class="btn bg-olive btn-xs" data-toggle="modal" data-target="#editModal">修改</button>
                             </td>
@@ -104,21 +115,21 @@
                             <tr>
                                 <td>广告分类</td>
                                 <td>
-                                    <select class="form-control">
-                                    </select>
+                                    <select class="form-control" ng-model="entity.categoryId"
+                                            ng-options="pojo.id as pojo.name for pojo in contentCatgoryList"></select>
                                 </td>
                             </tr>
                             <tr>
                                 <td>标题</td>
-                                <td><input class="form-control" placeholder="标题"></td>
+                                <td><input class="form-control" placeholder="标题" ng-model="entity.title"></td>
                             </tr>
                             <tr>
                                 <td>URL</td>
-                                <td><input class="form-control" placeholder="URL"></td>
+                                <td><input class="form-control" placeholder="URL" ng-model="entity.url"></td>
                             </tr>
                             <tr>
                                 <td>排序</td>
-                                <td><input class="form-control" placeholder="排序"></td>
+                                <td><input class="form-control" ng-model="entity.sortOrder" placeholder="排序"></td>
                             </tr>
                             <tr>
                                 <td>广告图片</td>
@@ -126,13 +137,13 @@
                                     <table>
                                         <tr>
                                             <td>
-                                                <input type="file" id="file"/>
-                                                <button class="btn btn-primary" type="button">
-                                                    上传
+                                                <input type="file" id="file" ng-model="entity.pic"/>
+                                                <button class="btn btn-primary" ng-click="uploadFile()" type="button">
+                                                    上传12
                                                 </button>
                                             </td>
                                             <td>
-                                                <img src="{{entity.PageInfo.pic}}" width="200px" height="100px">
+                                                <img ng-src="{{entity.pic}}" width="200px" height="100px">
                                             </td>
                                         </tr>
                                     </table>
@@ -141,14 +152,16 @@
                             <tr>
                                 <td>是否有效</td>
                                 <td>
-                                    <input type="checkbox" class="icheckbox_square-blue">
+                                    <!--广告状态-->
+                                    <input type="checkbox" class="icheckbox_square-blue"
+                                    ng-model="entity.status" ng-true-value="1" ng-false-value="0">
                                 </td>
                             </tr>
                         </table>
 
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-success" data-dismiss="modal" aria-hidden="true">保存</button>
+                        <button class="btn btn-success" data-dismiss="modal" aria-hidden="true" ng-click="save()">保存</button>
                         <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">关闭</button>
                     </div>
                 </div>

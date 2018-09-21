@@ -51,7 +51,7 @@
         me.success = success;
     }
 
-    SliderUnlock.prototype.init = function () {
+    SliderUnlock.prototype.initEntity = function () {
         var me = this;
 
         me.updateView();

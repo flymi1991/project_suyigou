@@ -1501,7 +1501,7 @@ the specific language governing permissions and limitations under the Apache Lic
         },
 
         // abstract
-        init: function (opts) {
+        initEntity: function (opts) {
             var results, search, resultsSelector = ".select2-results";
 
             // prepare options
@@ -4220,7 +4220,7 @@ the specific language governing permissions and limitations under the Apache Lic
                 }
 
                 select2 = multiple ? new window.Select2["class"].multi() : new window.Select2["class"].single();
-                select2.init(opts);
+                select2.initEntity(opts);
             } else if (typeof(args[0]) === "string") {
 
                 if (indexOf(args[0], allowedMethods) < 0) {
