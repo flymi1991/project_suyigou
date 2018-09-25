@@ -62,8 +62,8 @@ public class ContentServiceImpl implements ContentService {
     public void update(TbContent content) {
         //删除旧分组的缓存
         // TODO: 2018/9/22 0:20 为什么不采用content.getCategoryId()直接获取呢？
-        Long categoryId =
-                contentMapper.selectByPrimaryKey(content.getId()).getCategoryId();
+        // DONE 因为前台有可能将categoryId变了
+        Long categoryId = contentMapper.selectByPrimaryKey(content.getId()).getCategoryId();
         redisTemplate.boundHashOps("content").delete(categoryId);
         //更新操作
         contentMapper.updateByPrimaryKey(content);

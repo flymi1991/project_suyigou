@@ -9,7 +9,7 @@
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
 	<!--自己占用的端口，每个端口不能重复-->
-    <dubbo:protocol name="dubbo" port="20881"></dubbo:protocol>
+    <dubbo:protocol name="dubbo" port="20883"></dubbo:protocol>
 
 	<dubbo:application name="suyigou-sellergoods-service"/>
     <dubbo:registry address="zookeeper://192.168.25.135:2181"/>

@@ -19,6 +19,10 @@
         <module>suyigou_content_interface</module>
         <module>suyigou_content_service</module>
         <module>suyigou_portal_web</module>
+        <module>suyigou_solr_utils</module>
+        <module>suyigou_search_interface</module>
+        <module>suyigou_search_service</module>
+        <module>suyigou_search_web</module>
     </modules>
 
     <!-- 集中定义依赖版本号 -->
