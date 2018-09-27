@@ -13,6 +13,7 @@ import entity.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -65,7 +66,7 @@ public class GoodsServiceImpl implements GoodsService {
         goodsMapper.updateByPrimaryKey(goods.getGoods());
         goodsDescMapper.updateByPrimaryKey(goods.getGoodsDesc());
         //删除原有的 sku 列表数据
-        TbItemExample example=new TbItemExample();
+        TbItemExample example = new TbItemExample();
         com.suyigou.pojo.TbItemExample.Criteria criteria = example.createCriteria();
         criteria.andGoodsIdEqualTo(goods.getGoods().getId());
         itemMapper.deleteByExample(example);
@@ -179,11 +180,30 @@ public class GoodsServiceImpl implements GoodsService {
                 String itemImages = goods.getGoodsDesc().getItemImages();
                 List<Map> imgList = JSON.parseArray(itemImages, Map.class);
                 if (imgList.size() > 0) {
-                    String url = (String)(imgList.get(0).get("url"));
+                    String url = (String) (imgList.get(0).get("url"));
                     item.setImage(url);
                 }
                 itemMapper.insert(item);
             }
+        }
+    }
+
+    @Override
+    public List<TbItem> findItemListByGoodsIdandStatus(Long[] goodIds, String status) {
+        TbItemExample example = new TbItemExample();
+        TbItemExample.Criteria itemCriteria = example.createCriteria();
+        itemCriteria.andGoodsIdIn(Arrays.asList(goodIds));
+        itemCriteria.andStatusEqualTo(status);
+        itemMapper.selectByExample(example);
+        return null;
+    }
+
+    @Override
+    public void updateStatus(Long[] ids, String status) {
+        for (Long id : ids) {
+            TbGoods goods = goodsMapper.selectByPrimaryKey(id);
+            goods.setAuditStatus(status);
+            goodsMapper.updateByPrimaryKey(goods);
         }
     }
 }

@@ -15,4 +15,10 @@ app.controller('contentController', function ($scope, $controller, contentServic
             }
         )
     }
+    //搜索
+    $scope.search = function () {
+        debugger;
+        console.log("http://localhost:9104/search.html#?keywords" + $scope.keywords);
+        location.href = "http://localhost:9104/search.html#?keywords=" + $scope.keywords;
+    };
 })

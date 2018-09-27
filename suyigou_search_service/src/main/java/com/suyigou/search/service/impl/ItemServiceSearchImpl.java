@@ -5,6 +5,7 @@ import com.suyigou.pojo.TbItem;
 import com.suyigou.search.service.ItemSearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.data.solr.core.query.*;
@@ -13,7 +14,7 @@ import org.springframework.data.solr.core.query.result.*;
 import java.util.*;
 
 @Service(timeout = 60000)
-public class ItemServiceISearchImpl implements ItemSearchService {
+public class ItemServiceSearchImpl implements ItemSearchService {
 
     @Autowired
     private SolrTemplate solrTemplate;
@@ -23,9 +24,25 @@ public class ItemServiceISearchImpl implements ItemSearchService {
     @Override
     public Map<String, Object> search(Map searchMap) {
         Map<String, Object> map = new HashMap<>();
+
+        //将keywords的空格去掉
+        String keywords = (String) searchMap.get("keywords");
+        searchMap.put("keywords", keywords.replace(" ", ""));
+
+        //回写价格条件
+        map.put("price", searchMap.get("price"));
+
+        //回写分页条件
+        map.put("pageNo", searchMap.get("pageNo"));
+        map.put("pageSize", searchMap.get("pageSize"));
+
+        //保存itemList
         map.putAll(searchList(searchMap));
+
+        //保存categoryList
         List<String> categoryList = searchCategoryList(searchMap);
         map.put("categoryList", categoryList);
+
         //重新查询品牌列表和规格列表
         String categoryName = (String) searchMap.get("category");
         if (!"".equals(categoryName)) {
@@ -84,6 +101,61 @@ public class ItemServiceISearchImpl implements ItemSearchService {
                 query.addFilterQuery(specQuery);
             }
         }
+        //过滤价格
+        if (searchMap.get("price") != null) {
+            String[] price = ((String) searchMap.get("price")).split("-");
+            if (price.length > 1) {
+                if (!"0".equals(price[0])) {
+                    //最低筛选价格不为0
+                    SimpleFilterQuery lowPriceFilter = new SimpleFilterQuery();
+                    Criteria lowPriceCriteria = new Criteria("item_price").greaterThanEqual(price[0]);
+                    lowPriceFilter.addCriteria(lowPriceCriteria);
+                    query.addFilterQuery(lowPriceFilter);
+                }
+                if (!"*".equals(price[1])) {
+                    //最高筛选价格不为*
+                    SimpleFilterQuery highPriceFilter = new SimpleFilterQuery();
+                    Criteria highPriceCriteria = new Criteria("item_price").lessThanEqual(price[1]);
+                    highPriceFilter.addCriteria(highPriceCriteria);
+                    query.addFilterQuery(highPriceFilter);
+                }
+            }
+        }
+
+        //排序
+        String sortMethod = (String) searchMap.get("sort");
+        String sortField = (String) searchMap.get("sortField");
+        if (sortMethod != null && !"".equals(sortMethod)) {
+            Sort orders = null;
+            String field = "item" + sortField;
+            //只有排序字段不为空时
+            if (sortMethod.equalsIgnoreCase("ASC")) {
+                //升序
+                orders = new Sort(Sort.Direction.ASC, field);
+                query.addSort(orders);
+            } else {
+                //降序
+                orders = new Sort(Sort.Direction.DESC, field);
+                query.addSort(orders);
+            }
+        }
+
+
+        //分页参数处理
+        Object pageNoObj = searchMap.get("pageNo");
+        int pageNo = 1;//默认值
+        if (pageNoObj != null) {
+            pageNo = Integer.parseInt((String) pageNoObj);
+        }
+        Object pageSizeObj = searchMap.get("pageSize");
+
+        int pageSize = 10;//默认值
+        if (pageSizeObj != null) {
+            pageSize = Integer.parseInt((String) pageSizeObj);
+        }
+        query.setOffset((pageNo - 1) * pageSize);
+        query.setRows(pageSize);
+
         //获取查询结果集
         HighlightPage<TbItem> page = solrTemplate.queryForHighlightPage(query, TbItem.class);
         List<HighlightEntry<TbItem>> entryList = page.getHighlighted();
@@ -94,11 +166,18 @@ public class ItemServiceISearchImpl implements ItemSearchService {
             if (highlightList.size() > 0 && highlightList.get(0).getSnipplets().size() > 0) {
                 String title = highlightEntry.getHighlights().get(0).getSnipplets().get(0);
                 item.setTitle(title);//设置高亮的结果
-                items.add(item);
             }
+            items.add(item);
         }
         //结果集
         map.put("rows", items);
+        //回写分页条件
+        map.put("pageNo", searchMap.get("pageNo"));
+        map.put("pageSize", searchMap.get("pageSize"));
+
+        map.put("totalPages", page.getTotalPages());
+        map.put("totalItems", page.getTotalElements());
+
         return map;
     }
 
@@ -133,5 +212,22 @@ public class ItemServiceISearchImpl implements ItemSearchService {
             map.put("specList", specList);
         }
         return map;
+    }
+
+    //导入列表
+    @Override
+    public void importList(List list) {
+        solrTemplate.saveBeans(list);
+        solrTemplate.commit();
+    }
+
+    @Override
+    public void deleteByGoodsIds(List<Long> goodsIdList) {
+        System.out.println("删除商品 ID"+goodsIdList);
+        Query query=new SimpleQuery();
+        Criteria criteria=new Criteria("item_goodsid").in(goodsIdList);
+        query.addCriteria(criteria);
+        solrTemplate.delete(query);
+        solrTemplate.commit();
     }
 }
