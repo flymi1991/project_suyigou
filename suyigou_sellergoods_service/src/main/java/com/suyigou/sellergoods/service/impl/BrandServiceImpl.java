@@ -81,5 +81,4 @@ public class BrandServiceImpl implements BrandService {
     public List<Map> selectOptionList() {
         return brandMapper.selectOptionList();
     }
-
 }

@@ -10,6 +10,7 @@ import com.suyigou.pojo.TbItemCatExample.Criteria;
 import com.suyigou.sellergoods.service.ItemCatService;
 import entity.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.List;
 
@@ -24,6 +25,9 @@ public class ItemCatServiceImpl implements ItemCatService {
 
     @Autowired
     private TbItemCatMapper itemCatMapper;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     /**
      * 查询全部
@@ -75,7 +79,6 @@ public class ItemCatServiceImpl implements ItemCatService {
      * 批量删除
      */
     // 2018/9/18 9:57 根据parentId删除子类功能，改写mapper方法，根据parentId查找所有相关type，再行删除
-
     @Override
     public void delete(Long[] ids) {
         List<Long> ids2 = null;
@@ -109,13 +112,23 @@ public class ItemCatServiceImpl implements ItemCatService {
         return new PageResult(page.getTotal(), page.getResult());
     }
 
+    //增加Redis缓存处理
     @Override
     public List<TbItemCat> findByParentId(Long parentId) {
         TbItemCatExample example = new TbItemCatExample();
         Criteria criteria = example.createCriteria();
         criteria.andParentIdEqualTo(parentId);
-        List<TbItemCat> tbItemCatList = itemCatMapper.selectByExample(example);
-        return tbItemCatList;
+        List<TbItemCat> itemCatList = itemCatMapper.selectByExample(example);
+        /*缓存操作 start*/
+        List<TbItemCat> itemCats = findAll();
+        if (itemCatList != null && itemCats.size() > 0) {
+            for (TbItemCat itemCat : itemCats) {
+                redisTemplate.boundHashOps("itemCat").put(itemCat.getName(), itemCat.getTypeId());
+            }
+            System.out.println("在缓存中保存了itemCat数据，总条数:" + itemCats.size());
+        }
+        /*缓存操作 end*/
+        return itemCatList;
     }
 
 }
