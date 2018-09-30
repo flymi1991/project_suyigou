@@ -71,6 +71,7 @@ public interface GoodsService {
 
     /**
      * 根据SPU的id和状态查询SKU列表
+     *
      * @param goodIds
      * @param status
      * @return
@@ -79,8 +80,11 @@ public interface GoodsService {
 
     /**
      * 批量修改状态
+     *
      * @param ids
      * @param status
      */
-    public void updateStatus(Long []ids,String status);
+    public void updateStatus(Long[] ids, String status);
+
+    void updateItemStatus(Long[] ids, String status);
 }

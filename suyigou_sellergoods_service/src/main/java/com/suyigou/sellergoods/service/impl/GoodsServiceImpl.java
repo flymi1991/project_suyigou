@@ -143,7 +143,7 @@ public class GoodsServiceImpl implements GoodsService {
             }
 
         }
-
+        criteria.andIsDeleteNotEqualTo("1");//查询结果去除掉已经物理删除的商品
         Page<TbGoods> page = (Page<TbGoods>) goodsMapper.selectByExample(example);
         return new PageResult(page.getTotal(), page.getResult());
     }
@@ -194,8 +194,7 @@ public class GoodsServiceImpl implements GoodsService {
         TbItemExample.Criteria itemCriteria = example.createCriteria();
         itemCriteria.andGoodsIdIn(Arrays.asList(goodIds));
         itemCriteria.andStatusEqualTo(status);
-        itemMapper.selectByExample(example);
-        return null;
+        return itemMapper.selectByExample(example);
     }
 
     @Override
@@ -205,5 +204,19 @@ public class GoodsServiceImpl implements GoodsService {
             goods.setAuditStatus(status);
             goodsMapper.updateByPrimaryKey(goods);
         }
+    }
+
+    //根据运营商审核后的goodsId的更新SKU的状态
+    @Override
+    public void updateItemStatus(Long[] ids, String status) {
+        List<Long> idList = Arrays.asList(ids);
+        TbItemExample itemExample = new TbItemExample();
+        TbItemExample.Criteria criteria = itemExample.createCriteria();
+        criteria.andGoodsIdIn(idList);
+        TbItem item = new TbItem();
+        item.setStatus(status);
+        //updateByExampleSelective可以不按主键更新，条件中可以不包含主键
+        //updateByExample条件中必须包含主键
+        itemMapper.updateByExampleSelective(item, itemExample);
     }
 }

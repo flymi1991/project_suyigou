@@ -125,7 +125,7 @@
 
                                 <div class="col-md-2 title editer">商品介绍</div>
                                 <div class="col-md-10 data editer">
-                                    <textarea name="content" style="width:800px;height:400px;visibility:hidden;"></textarea>
+                                    <textarea name="context" style="width:800px;height:400px;visibility:hidden;"></textarea>
                                 </div>
 
                                 <div class="col-md-2 title rowHeight2x">包装列表</div>
@@ -162,10 +162,10 @@
                                     </thead>
                                     <tbody>
                                         <tr ng-repeat="pojo in entity.goodsDesc.itemImages">
-                                            <td >
+                                            <td>
                                                 {{pojo.color}}
                                             </td>
-                                            <td >
+                                            <td>
                                                 <img alt="" ng-src="{{pojo.url}}" width="100px" height="100px">
                                             </td>
                                             <td>
@@ -244,10 +244,10 @@
                                                     <input class="form-control" placeholder="库存数量" ng-model="item.stockCount">
                                                 </td>
                                                 <td>
-                                                    <input type="checkbox"  ng-model="pojo.status" ng-true-value="1" ng-false-value="0">
+                                                    <input type="checkbox" ng-model="pojo.status" ng-true-value="1" ng-false-value="0">
                                                 </td>
                                                 <td>
-                                                    <input type="checkbox"  ng-model="pojo.isDefault" ng-true-value="1" ng-false-value="0">
+                                                    <input type="checkbox" ng-model="pojo.isDefault" ng-true-value="1" ng-false-value="0">
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -318,20 +318,7 @@
                 </div>
             </div>
         </div>
-
-
-        <!-- 正文区域 /-->
-        <script type="text/javascript">
-
-            var editor;
-            KindEditor.ready(function (K) {
-                editor = K.create('textarea[name="content"]', {
-                    allowFileManager: true
-                });
-            });
-
-        </script>
-
     </body>
+
 
 </html>

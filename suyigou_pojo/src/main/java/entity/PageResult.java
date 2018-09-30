@@ -3,14 +3,14 @@ package entity;
 import java.io.Serializable;
 import java.util.List;
 
-public class PageResult<T> implements Serializable{
+public class PageResult<T> implements Serializable {
     private long total;//总数
     private int size;//每页的个数
     private int curPage;//当前页
     private int totolPage;//总页数
     private List<T> rows; //当前页的集合
 
-    public PageResult(long total, List<T> rows) {
+    public PageResult(long total,  List<T> rows) {
         this.total = total;
         this.rows = rows;
     }

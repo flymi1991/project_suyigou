@@ -3,9 +3,10 @@ package com.suyigou.dao;
 import com.suyigou.pojo.TbGoods;
 import com.suyigou.pojo.TbGoodsExample;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
-
+@Repository
 public interface TbGoodsMapper {
     int countByExample(TbGoodsExample example);
 

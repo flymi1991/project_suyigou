@@ -79,7 +79,7 @@ app.controller('goodsController', function ($scope, $controller, $location, good
         serviceObject.success(
             function (response) {
                 if (response.success) {
-                    $editor.html('');//将富文本初始化
+                    editor.html('');//将富文本初始化
                     //首先定义实体结构
                     $scope.entity = {
                         goods: {},

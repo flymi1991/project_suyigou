@@ -1,8 +1,8 @@
 //控制层
-app.controller('goodsController', function ($scope, $controller, goodsService) {
+app.controller('goodsController', function ($scope, $controller, goodsService, itemCatService) {
 
-    $scope.status=['未审核','已审核','审核未通过','关闭'];//商品状态
-    $scope.itemCatList=[];//商品分类列表
+    $scope.status = ['未审核', '已审核', '审核未通过', '关闭'];//商品状态
+    $scope.itemCatList = [];//商品分类列表
 
     $controller('baseController', {$scope: $scope});//继承
 
@@ -56,7 +56,7 @@ app.controller('goodsController', function ($scope, $controller, goodsService) {
 
 
     //批量删除
-    $scope.dele = function () {
+    $scope.delete = function () {
         //获取选中的复选框
         goodsService.dele($scope.selectIds).success(
             function (response) {
@@ -75,21 +75,22 @@ app.controller('goodsController', function ($scope, $controller, goodsService) {
         goodsService.search(page, rows, $scope.searchEntity).success(
             function (response) {
                 $scope.list = response.rows;
-                $scope.paginationConf.totalItems = response.total;//更新总记录数
+                $scope.paginationConf.totalItem = response.total;//更新总记录数
             }
         );
     }
 
     //更改状态
-    $scope.updateStatus=function(status){
-        goodsService.updateStatus($scope.selectIds,status).success(
-            function(response){
-                if(response.success){//成功
-                    $scope.reloadList();//刷新列表
-                    $scope.selectIds=[];//清空 ID 集合
-                }else{
+    $scope.updateStatus = function (status) {
+        debugger;
+        goodsService.updateStatus($scope.selectIds, status).success(
+            function (response) {
+                if (response.success) {//成功
+                    $scope.selectIds = [];//清空 ID 集合
+                } else {
                     alert(response.message);
                 }
+                $scope.reloadList();//刷新列表
             }
         );
     }

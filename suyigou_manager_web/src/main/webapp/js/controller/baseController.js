@@ -13,7 +13,8 @@ app.controller("baseController", function ($scope) {
 
     //重新加载页面
     $scope.reloadList = function () {
-        $scope.search($scope.paginationConf.curPage, $scope.paginationConf.itemsPerPage, $scope.searchEntity);
+        // TODO: 2018/9/30 17:30 有个bug，当只改变时每页条数时，是否应该让当前页变为1
+        $scope.search($scope.paginationConf.curPage, $scope.paginationConf.itemsPerPage);
     };
 
     //删除复选框
