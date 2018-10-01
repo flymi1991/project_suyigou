@@ -2,9 +2,9 @@ app.controller("baseController", function ($scope) {
     //定义分页参数对象
     $scope.paginationConf = {
         curPage: 1,
-        itemsPerPage: 3,
+        itemsPerPage: 5,
         totalItem: 8,
-        perPageOptions: [3, 6, 9],
+        perPageOptions: [5, 10, 15],
         onChange: function () {
             $scope.reloadList();
         }
@@ -14,7 +14,7 @@ app.controller("baseController", function ($scope) {
     //重新加载页面
     $scope.reloadList = function () {
         // TODO: 2018/9/30 17:30 有个bug，当只改变时每页条数时，是否应该让当前页变为1
-        $scope.search($scope.paginationConf.curPage, $scope.paginationConf.itemsPerPage);
+        $scope.search($scope.paginationConf.curPage, $scope.paginationConf.itemsPerPage, $scope.searchEntity);
     };
 
     //删除复选框

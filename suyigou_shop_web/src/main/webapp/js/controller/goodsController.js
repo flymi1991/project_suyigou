@@ -51,7 +51,6 @@ app.controller('goodsController', function ($scope, $controller, $location, good
                     //回写富文本
                     editor.html($scope.entity.goodsDesc.introduction);
                     //回写图片
-                    debugger;
                     $scope.entity.goodsDesc.itemImages = JSON.parse($scope.entity.goodsDesc.itemImages);
                     //扩展属性
                     $scope.entity.goodsDesc.customAttributeItems = JSON.parse($scope.entity.goodsDesc.customAttributeItems);

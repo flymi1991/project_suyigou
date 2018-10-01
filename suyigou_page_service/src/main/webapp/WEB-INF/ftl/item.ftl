@@ -2,23 +2,41 @@
 <html>
 
     <head>
-        <meta charset="utf-8"/>
+        <meta charset="gbk"/>
         <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE">
         <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"/>
         <title>产品详情页</title>
         <link rel="icon" href="assets/img/favicon.ico">
-
         <link rel="stylesheet" type="text/css" href="css/webbase.css"/>
         <link rel="stylesheet" type="text/css" href="css/pages-item.css"/>
         <link rel="stylesheet" type="text/css" href="css/pages-zoom.css"/>
         <link rel="stylesheet" type="text/css" href="css/widget-cartPanelView.css"/>
+        <script src="plugins/angularjs/angular.min.js"></script>
+        <script src="js/commons/base.js"></script>
+        <script src="js/controller/itemController.js"></script>
+
+        <script>
+            var skuList = [
+                <#list itemList as item>
+                    {
+                        "id":${item.id?c},
+                        "title": "${item.title!''}",
+                        "price":${item.price?c},
+                        "spec": ${item.spec}
+                    },
+                </#list>
+            ];
+        </script>
     </head>
 
-    <body>
-
+    <body ng-app="suyigou" ng-controller="itemController" ng-init="num=1;loadSku()">
         <!--页面顶部 开始-->
         <#include "head.ftl">
         <!--页面顶部 结束-->
+
+    <#--转换json字符串-->
+        <#assign imageList=goodsDesc.itemImages?eval>
+        <#assign specList=goodsDesc.specificationItems?eval>
 
         <!--页面主体 开始-->
         <div class="py-container">
@@ -26,15 +44,14 @@
                 <div class="crumb-wrap">
                     <ul class="sui-breadcrumb">
                         <li>
-                            <a href="#">手机、数码、通讯</a>
+                            <a href="#">${itemCat1.name}</a>
                         </li>
                         <li>
-                            <a href="#">手机</a>
+                            <a href="#">${itemCat2.name}</a>
                         </li>
                         <li>
-                            <a href="#">Apple苹果</a>
+                            <a href="#">${itemCat3.name}</a>
                         </li>
-                        <li class="active">iphone 6S系类</li>
                     </ul>
                 </div>
                 <!--product-info-->
@@ -43,24 +60,22 @@
                         <!--放大镜效果-->
                         <div class="zoom">
                             <!--默认第一个预览-->
-                            <div id="preview" class="spec-preview">
-                                <span class="jqzoom"><img jqimg="img/_/b1.png" src="img/_/s1.png"/></span>
-                            </div>
+                            <#if (imageList?size>0)>
+                                <div id="preview" class="spec-preview">
+                                    <span class="jqzoom"><img jqimg="${imageList[0].url}" src="${imageList[0].url}"/></span>
+                                </div>
+                            </#if>
                             <!--下方的缩略图-->
                             <div class="spec-scroll">
                                 <a class="prev">&lt;</a>
                                 <!--左右按钮-->
                                 <div class="items">
                                     <ul>
-                                        <li><img src="img/_/s1.png" bimg="img/_/b1.png" onmousemove="preview(this)"/></li>
-                                        <li><img src="img/_/s2.png" bimg="img/_/b2.png" onmousemove="preview(this)"/></li>
-                                        <li><img src="img/_/s3.png" bimg="img/_/b3.png" onmousemove="preview(this)"/></li>
-                                        <li><img src="img/_/s1.png" bimg="img/_/b1.png" onmousemove="preview(this)"/></li>
-                                        <li><img src="img/_/s2.png" bimg="img/_/b2.png" onmousemove="preview(this)"/></li>
-                                        <li><img src="img/_/s3.png" bimg="img/_/b3.png" onmousemove="preview(this)"/></li>
-                                        <li><img src="img/_/s1.png" bimg="img/_/b1.png" onmousemove="preview(this)"/></li>
-                                        <li><img src="img/_/s2.png" bimg="img/_/b2.png" onmousemove="preview(this)"/></li>
-                                        <li><img src="img/_/s3.png" bimg="img/_/b3.png" onmousemove="preview(this)"/></li>
+                                        <#list imageList as image>
+                                            <li>
+                                                <img src="${image.url}" bimg="${image.url}" width="400px" height="400px" onmousemove="preview(this)"/>
+                                            </li>
+                                        </#list>
                                     </ul>
                                 </div>
                                 <a class="next">&gt;</a>
@@ -69,17 +84,19 @@
                     </div>
                     <div class="fr itemInfo-wrap">
                         <div class="sku-name">
-                            <h4>${goods.goodsName}</h4>
+                            <h4>{{sku.title}}</h4>
                         </div>
-                        <div class="news"><span>${goods.caption}</span></div>
+                        <div class="news">
+                            <span>${goods.caption}</span>
+                        </div>
                         <div class="summary">
                             <div class="summary-wrap">
                                 <div class="fl title">
                                     <i>价　　格</i>
                                 </div>
                                 <div class="fl price">
-                                    <i>¥</i>
-                                    <em>${goods.price}</em>
+                                    <i>￥</i>
+                                    <em>{{sku.price}}</em>
                                     <span>降价通知</span>
                                 </div>
                                 <div class="fr remark">
@@ -117,78 +134,39 @@
                         </div>
                         <div class="clearfix choose">
                             <div id="specification" class="summary-wrap clearfix">
-                                <dl>
-                                    <dt>
-                                        <div class="fl title">
-                                            <i>选择颜色</i>
-                                        </div>
-                                    </dt>
-                                    <dd><a href="javascript:;" class="selected">金色<span title="点击取消选择">&nbsp;</span>
-                                    </a></dd>
-                                    <dd><a href="javascript:;">银色</a></dd>
-                                    <dd><a href="javascript:;">黑色</a></dd>
-                                </dl>
-                                <dl>
-                                    <dt>
-                                        <div class="fl title">
-                                            <i>内存容量</i>
-                                        </div>
-                                    </dt>
-                                    <dd><a href="javascript:;" class="selected">16G<span title="点击取消选择">&nbsp;</span>
-                                    </a></dd>
-                                    <dd><a href="javascript:;">64G</a></dd>
-                                    <dd><a href="javascript:;" class="locked">128G</a></dd>
-                                </dl>
-                                <dl>
-                                    <dt>
-                                        <div class="fl title">
-                                            <i>选择版本</i>
-                                        </div>
-                                    </dt>
-                                    <dd><a href="javascript:;" class="selected">公开版<span title="点击取消选择">&nbsp;</span>
-                                    </a></dd>
-                                    <dd><a href="javascript:;">移动版</a></dd>
-                                </dl>
-                                <dl>
-                                    <dt>
-                                        <div class="fl title">
-                                            <i>购买方式</i>
-                                        </div>
-                                    </dt>
-                                    <dd><a href="javascript:;" class="selected">官方标配<span title="点击取消选择">&nbsp;</span>
-                                    </a></dd>
-                                    <dd><a href="javascript:;">移动优惠版</a></dd>
-                                    <dd><a href="javascript:;" class="locked">电信优惠版</a></dd>
-                                </dl>
-                                <dl>
-                                    <dt>
-                                        <div class="fl title">
-                                            <i>套　　装</i>
-                                        </div>
-                                    </dt>
-                                    <dd><a href="javascript:;" class="selected">保护套装<span title="点击取消选择">&nbsp;</span>
-                                    </a></dd>
-                                    <dd><a href="javascript:;" class="locked">充电套装</a></dd>
-
-                                </dl>
-
-
+                            <#--循环specificationItems-->
+                                <#list specList as spec>
+                                    <dl>
+                                        <dt>
+                                            <div class="fl title">
+                                                <i>${spec.attributeName}</i>
+                                            </div>
+                                        </dt>
+                                    <#--循环attributeValue-->
+                                        <#list spec.attributeValue as attribute>
+                                            <dd>
+                                                <a href="javascript:;" class="{{isSelected('${spec.attributeName}','${attribute}')?'selected':''}}" ng-click="selectSpec('${spec.attributeName}','${attribute}');isSelected('${spec.attributeName}','${attribute}')">
+                                                    ${attribute}<span title="点击取消选择">&nbsp;</span>
+                                                </a>
+                                            </dd>
+                                        </#list>
+                                    </dl>
+                                </#list>
                             </div>
-
                             <div class="summary-wrap">
                                 <div class="fl title">
                                     <div class="control-group">
                                         <div class="controls">
-                                            <input autocomplete="off" type="text" value="1" minnum="1" class="itxt"/>
-                                            <a href="javascript:void(0)" class="increment plus">+</a>
-                                            <a href="javascript:void(0)" class="increment mins">-</a>
+                                            <input autocomplete="off" ng-model="num" type="text" value="1" minnum="1" class="itxt"/>
+                                            <a href="javascript:void(0)" ng-click="addNum(1)" class="increment plus">+</a>
+                                            <a href="javascript:void(0)" ng-click="addNum(-1)" class="increment mins">-</a>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="fl">
                                     <ul class="btn-choose unstyled">
                                         <li>
-                                            <a href="cart.html" target="_blank" class="sui-btn  btn-danger addshopcar">加入购物车</a>
+                                            <a href="javascript:void(0)" ng-click="add2Cart()" class="sui-btn  btn-danger addshopcar">加入购物车</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -425,6 +403,7 @@
                                         <li>机身内存：64GB</li>
                                     </ul>
                                     <div class="intro-detail">
+                                    ${goodsDesc.introduction}
                                         <img src="img/_/intro01.png"/>
                                         <img src="img/_/intro02.png"/>
                                         <img src="img/_/intro03.png"/>
@@ -734,10 +713,9 @@
         <script type="text/javascript" src="js/plugins/sui/sui.min.js"></script>
         <script type="text/javascript" src="js/plugins/jquery.jqzoom/jquery.jqzoom.js"></script>
         <script type="text/javascript" src="js/plugins/jquery.jqzoom/zoom.js"></script>
-        <script type="text/javascript" src="index/index.js"></script>
-
-
+    <#--<script type="text/javascript" src="index/index.js"></script>-->
         <!--页面底部  结束 -->
+
     </body>
 
 </html>

@@ -82,7 +82,6 @@ app.controller('goodsController', function ($scope, $controller, goodsService, i
 
     //更改状态
     $scope.updateStatus = function (status) {
-        debugger;
         goodsService.updateStatus($scope.selectIds, status).success(
             function (response) {
                 if (response.success) {//成功

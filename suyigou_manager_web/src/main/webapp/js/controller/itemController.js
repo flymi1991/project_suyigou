@@ -3,7 +3,7 @@ app.controller('itemController', function ($scope, $controller, itemService) {
 
     $controller('baseController', {$scope: $scope});//继承
 
-    //读取列表数据绑定到表单中  
+    //读取列表数据绑定到表单中
     $scope.findAll = function () {
         itemService.findAll().success(
             function (response) {
@@ -77,4 +77,4 @@ app.controller('itemController', function ($scope, $controller, itemService) {
         );
     }
 
-});	
+});

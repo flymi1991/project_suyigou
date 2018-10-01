@@ -24,6 +24,7 @@
         <module>suyigou_search_service</module>
         <module>suyigou_search_web</module>
         <module>suyigou_page_service</module>
+        <module>suyigou_page_web</module>
     </modules>
 
     <!-- 集中定义依赖版本号 -->

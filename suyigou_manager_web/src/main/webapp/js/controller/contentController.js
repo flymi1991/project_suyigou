@@ -53,7 +53,6 @@ app.controller('contentController', function ($scope, $controller, contentServic
 
     //保存
     $scope.save = function () {
-        debugger;
         var serviceObject;//服务层对象
         if ($scope.entity.id) {//如果有ID
             serviceObject = contentService.update($scope.entity); //修改

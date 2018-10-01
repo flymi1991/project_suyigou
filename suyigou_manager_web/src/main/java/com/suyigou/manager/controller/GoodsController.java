@@ -126,14 +126,19 @@ public class GoodsController {
             //更新 SKU 状态
             goodsService.updateItemStatus(ids, status);
 
-            if (status.equals("1")) {//审核通过
+            if (status.equals("1")) {
+                //审核通过
+                //生成静态页面
+                for (Long goodsId : ids) {
+                    itemPageService.genItemHtml(goodsId);
+                }
                 //按照 SPU ID 查询 SKU 列表(状态为 1)
                 List<TbItem> itemList =
                         goodsService.findItemListByGoodsIdandStatus(ids, status);
                 //调用搜索接口实现数据批量导入
                 if (itemList != null && itemList.size() > 0) {
                     // TODO: 2018/9/30 17:52 将审核通过的SKU导入solr索引库
-                    //itemSearchService.importList(itemList);
+                    itemSearchService.importList(itemList);
                     System.out.println("itemList = " + itemList.toArray());
                 } else {
                     System.out.println("没有明细数据");
@@ -145,4 +150,5 @@ public class GoodsController {
             return new ResultInfo(false, "失败");
         }
     }
+
 }

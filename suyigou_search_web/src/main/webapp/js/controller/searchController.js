@@ -119,7 +119,6 @@ app.controller('searchController', function ($scope, $location, searchService) {
         }
         //判断关键字是不是品牌
         $scope.keywordsIsBrand = function () {
-            debugger;
             if ($scope.resultMap) {
                 var keywords = $scope.searchMap.keywords;
                 //判断keywords在brandList中是否存在
