@@ -15,6 +15,7 @@ app.controller("baseController", function ($scope) {
     $scope.reloadList = function () {
         // TODO: 2018/9/30 17:30 有个bug，当只改变时每页条数时，是否应该让当前页变为1
         $scope.search($scope.paginationConf.curPage, $scope.paginationConf.itemsPerPage, $scope.searchEntity);
+        $scope.selectIds = [];
     };
 
     //删除复选框
@@ -29,6 +30,7 @@ app.controller("baseController", function ($scope) {
             $scope.selectIds.splice(index, 1);//参数1：移除的位置 参数2:移除的个数
         }
     };
+
     //提取 json 字符串数据中某个属性，返回拼接字符串 逗号分隔
     $scope.jsonToString = function (jsonString, key) {
         var value = "";

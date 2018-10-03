@@ -6,4 +6,6 @@ public interface ItemPageService {
      * @param goodsId
      */
     boolean genItemHtml(Long goodsId);
+
+    void deleteHtml(Long id);
 }

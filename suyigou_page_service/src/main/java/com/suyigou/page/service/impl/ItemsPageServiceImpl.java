@@ -1,6 +1,5 @@
 package com.suyigou.page.service.impl;
 
-import com.alibaba.dubbo.config.annotation.Service;
 import com.suyigou.dao.TbGoodsDescMapper;
 import com.suyigou.dao.TbGoodsMapper;
 import com.suyigou.dao.TbItemCatMapper;
@@ -11,15 +10,17 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Service(timeout = 60000)
+@Service
 public class ItemsPageServiceImpl implements ItemPageService {
     @Autowired
     private FreeMarkerConfigurer configurer;
@@ -90,4 +91,12 @@ public class ItemsPageServiceImpl implements ItemPageService {
             }
         }
     }
+
+    @Override
+    public void deleteHtml(Long goodsId) {
+        TbGoods goods = goodsMapper.selectByPrimaryKey(goodsId);
+        File file = new File(pagedir + goods.getId() + ".html");
+        file.delete();
+    }
+
 }

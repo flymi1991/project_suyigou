@@ -15,6 +15,7 @@ app.controller("baseController", function ($scope) {
     //重新加载页面
     $scope.reloadList = function () {
         $scope.search($scope.paginationConf.currentPage, $scope.paginationConf.itemsPerPage, $scope.searchEntity);
+        $scope.delList = [];
     };
 
     //删除复选框

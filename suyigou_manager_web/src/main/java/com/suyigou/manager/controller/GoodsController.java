@@ -1,18 +1,21 @@
 package com.suyigou.manager.controller;
 
 import com.alibaba.dubbo.config.annotation.Reference;
-import com.suyigou.page.service.ItemPageService;
+import com.alibaba.fastjson.JSON;
 import com.suyigou.pojo.TbGoods;
 import com.suyigou.pojo.TbItem;
-import com.suyigou.search.service.ItemSearchService;
 import com.suyigou.sellergoods.service.GoodsService;
 import entity.Goods;
 import entity.PageResult;
 import entity.ResultInfo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.core.MessageCreator;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.jms.*;
 import java.util.List;
 
 /**
@@ -26,11 +29,23 @@ public class GoodsController {
 
     @Reference
     private GoodsService goodsService;
-    @Reference
-    private ItemSearchService itemSearchService;
+    /*@Reference
+    private ItemSearchService itemSearchService;*/
 
-    @Reference(timeout = 300000)
-    private ItemPageService itemPageService;
+    @Autowired
+    private JmsTemplate jmsTemplate;
+    @Autowired
+    private Destination queueSolrAddDestination;
+
+    @Autowired
+    private Destination queueSolrDeleteDestination;
+
+    @Autowired
+    private Destination topicsPageAddDestination;
+
+    @Autowired
+    private Destination topicsPageDeleteDestination;
+
 
     /**
      * 生成静态页面
@@ -39,11 +54,21 @@ public class GoodsController {
      */
     @RequestMapping("/genHtml")
     public void genItemHtml(Long goodsId) {
-        boolean success = itemPageService.genItemHtml(goodsId);
-        if (success) {
-            System.out.println("静态页面生成成功,goodsId=" + goodsId);
-        } else {
-            System.out.println("静态页面生成失败,goodsId=" + goodsId);
+        Long[] ids = {goodsId};
+        //按照 SPU ID 查询 SKU 列表(状态为 1)
+        List<TbItem> itemList =
+                goodsService.findItemListByGoodsIdandStatus(ids, "1");
+        //调用搜索接口实现数据批量导入
+        if (itemList != null && itemList.size() > 0) {
+            final String jsonString = JSON.toJSONString(itemList);
+            //生成静态页面
+            jmsTemplate.send(topicsPageAddDestination, new MessageCreator() {
+                @Override
+                public Message createMessage(Session session) throws JMSException {
+                    TextMessage message = session.createTextMessage(jsonString);
+                    return message;
+                }
+            });
         }
     }
 
@@ -93,6 +118,21 @@ public class GoodsController {
             goodsService.delete(ids);
             //从solr索引库删除
             //itemSearchService.deleteByGoodsIds(Arrays.asList(ids));
+            final String jsonString = JSON.toJSONString(ids);
+            jmsTemplate.send(topicsPageDeleteDestination, new MessageCreator() {
+                @Override
+                public Message createMessage(Session session) throws JMSException {
+                    TextMessage message = session.createTextMessage(jsonString);
+                    return message;
+                }
+            });
+            jmsTemplate.send(queueSolrDeleteDestination, new MessageCreator() {
+                @Override
+                public Message createMessage(Session session) throws JMSException {
+                    TextMessage message = session.createTextMessage(jsonString);
+                    return message;
+                }
+            });
             return new ResultInfo(true, "删除成功");
         } catch (Exception e) {
             e.printStackTrace();
@@ -128,17 +168,33 @@ public class GoodsController {
 
             if (status.equals("1")) {
                 //审核通过
+
+                //发送生成静态页面指令
+                //将itemList转为json字符串
+                final String idsJsonStr = JSON.toJSONString(ids);
                 //生成静态页面
-                for (Long goodsId : ids) {
-                    itemPageService.genItemHtml(goodsId);
-                }
+                jmsTemplate.send(topicsPageAddDestination, new MessageCreator() {
+                    @Override
+                    public Message createMessage(Session session) throws JMSException {
+                        TextMessage message = session.createTextMessage(idsJsonStr);
+                        return message;
+                    }
+                });
+
                 //按照 SPU ID 查询 SKU 列表(状态为 1)
                 List<TbItem> itemList =
                         goodsService.findItemListByGoodsIdandStatus(ids, status);
+                final String itemListJsonStr = JSON.toJSONString(itemList);
                 //调用搜索接口实现数据批量导入
                 if (itemList != null && itemList.size() > 0) {
-                    // TODO: 2018/9/30 17:52 将审核通过的SKU导入solr索引库
-                    itemSearchService.importList(itemList);
+                    // 将审核通过的SKU导入solr索引库
+                    jmsTemplate.send(queueSolrAddDestination, new MessageCreator() {
+                        @Override
+                        public Message createMessage(Session session) throws JMSException {
+                            TextMessage message = session.createTextMessage(itemListJsonStr);
+                            return message;
+                        }
+                    });
                     System.out.println("itemList = " + itemList.toArray());
                 } else {
                     System.out.println("没有明细数据");

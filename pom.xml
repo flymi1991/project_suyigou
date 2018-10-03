@@ -200,6 +200,11 @@
                 <artifactId>activemq-all</artifactId>
                 <version>${activemq.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.activemq</groupId>
+                <artifactId>activemq-client</artifactId>
+                <version>${activemq.version}</version>
+            </dependency>
             <!-- 身份验证 -->
             <dependency>
                 <groupId>org.springframework.security</groupId>
