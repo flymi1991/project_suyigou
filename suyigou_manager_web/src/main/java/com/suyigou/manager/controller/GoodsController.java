@@ -113,6 +113,7 @@ public class GoodsController {
      */
     @RequestMapping("/delete")
     public ResultInfo delete(Long[] ids) {
+        // TODO: 2018/10/4 9:37 之前加事务支持都是在service层，这里controller不能加吗？
         try {
             //从表中逻辑删除
             goodsService.delete(ids);

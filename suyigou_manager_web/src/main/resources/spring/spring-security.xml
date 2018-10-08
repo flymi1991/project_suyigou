@@ -26,6 +26,8 @@
             <frame-options policy="SAMEORIGIN"/>
         </headers>
         <logout/>
+        <!--自定义退出登录url-->
+        <logout logout-url="" logout-success-url=""/>
     </http>
     <authentication-manager>
         <authentication-provider>
