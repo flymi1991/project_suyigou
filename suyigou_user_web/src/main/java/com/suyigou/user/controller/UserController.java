@@ -4,6 +4,7 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import com.suyigou.pojo.TbUser;
 import com.suyigou.user.service.UserService;
 import entity.ResultInfo;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import utils.PhoneFormatCheckUtils;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * controller
@@ -107,5 +110,14 @@ public class UserController {
             e.printStackTrace();
             return new ResultInfo(false, "验证码发送失败");
         }
+    }
+
+    @RequestMapping("/showName")
+    public Map showName() {
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        System.out.println("name = " + name);
+        Map map=new HashMap<>();
+        map.put("loginName", name);
+        return map;
     }
 }

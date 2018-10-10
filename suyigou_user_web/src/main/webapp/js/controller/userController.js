@@ -28,4 +28,13 @@ app.controller('userController', function ($scope, $controller, userService) {
             }
         );
     }
+
+    $scope.showName = function () {
+        debugger;
+        userService.showName().success(
+            function (response) {
+                $scope.username = response.loginName;
+            }
+        )
+    }
 })

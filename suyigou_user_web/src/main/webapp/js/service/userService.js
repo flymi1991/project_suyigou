@@ -33,4 +33,8 @@ app.service('userService', function ($http) {
     this.sendCode = function (phone) {
         return $http.get('user/sendCode.do?phone=' + phone);
     }
+    //查询用户名
+    this.showName = function () {
+        return $http.get('user/showName.do');
+    }
 });
