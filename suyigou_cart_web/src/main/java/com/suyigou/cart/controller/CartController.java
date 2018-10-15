@@ -28,6 +28,8 @@ public class CartController {
     //向购物车添加item
     @RequestMapping("/add")
     public ResultInfo addGoods2CartList(Long itemId, Integer num) {
+        response.setHeader("Access-Control-Allow-Origin", "http://localhost:9105");//允许跨域请求
+        response.setHeader("Access-Control-Allow-Credentials", "true");//允许使用cookie
         //得到登陆人账号,判断当前是否有人登陆
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         System.out.println("当前登录用户为 = " + username);
@@ -37,12 +39,12 @@ public class CartController {
             //调用cartService向cartList中添加item
             List<Cart> carts = cartService.addItem2CartList(cartList, itemId, num);
             if (!"anonymousUser".equals(username)) {
+                //用户已经登录，保存到缓存
+                cartService.saveCartList2Redis(username, carts);
+            } else {
                 //用户未登录，保存到cookie
                 //将新的cartList存入cookie中
                 saveCartList2Cookie(carts);
-            } else {
-                //用户已经登录，保存到缓存
-                cartService.saveCartList2Redis(username, carts);
             }
             return new ResultInfo(true, "添加成功");
         } catch (Exception e) {

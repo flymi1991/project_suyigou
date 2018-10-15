@@ -33,6 +33,9 @@ public class CartServiceImpl implements CartService {
         if (!item.getStatus().equals("1")) {
             throw new RuntimeException("商品状态无效");
         }
+        if (cartList == null) {
+            cartList = new ArrayList<Cart>();
+        }
         //2.查找item对应的商家是否在cartList中存在
         Cart cart = searchCartListBySellerId(cartList, item.getSellerId());
         if (cart == null) {
@@ -120,7 +123,7 @@ public class CartServiceImpl implements CartService {
      * @return
      */
     private Cart searchCartListBySellerId(List<Cart> cartList, String sellerId) {
-        if (cartList != null || cartList.size() > 0) {
+        if (cartList != null && cartList.size() > 0) {
             for (Cart cart : cartList) {
                 if (cart.getSellerId().equals(sellerId)) {
                     return cart;

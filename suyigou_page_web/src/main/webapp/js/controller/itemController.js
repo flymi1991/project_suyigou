@@ -1,5 +1,5 @@
 //���Ʋ�
-app.controller('itemController', function ($scope, $controller) {
+app.controller('itemController', function ($scope, $controller, $http) {
 
     //��������
     $scope.num = 1;
@@ -70,5 +70,15 @@ app.controller('itemController', function ($scope, $controller) {
         console.log("add2Cart:" + $scope.sku.id);
         console.log("total:" + $scope.num);
         console.log("totalPrice:" + $scope.sku.price * $scope.num);
+        alert($scope.sku.id);
+        $http.get('http://localhost:9107/cart/add.do?itemId=' + $scope.sku.id + '&num=' + $scope.num,{'withCredentials':true}).success(
+            function (response) {
+                if (response.success) {
+                    location.href = 'http://localhost:9107/cart.html';//跳转到购物车页面
+                } else {
+                    alert("添加错误");
+                }
+            }
+        )
     }
 });	

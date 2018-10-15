@@ -166,7 +166,7 @@
                                 <div class="fl">
                                     <ul class="btn-choose unstyled">
                                         <li>
-                                            <a href="javascript:void(0)" ng-click="add2Cart()" class="sui-btn  btn-danger addshopcar">加入购物车</a>
+                                            <a ng-click="add2Cart()" class="sui-btn  btn-danger addshopcar">加入购物车</a>
                                         </li>
                                     </ul>
                                 </div>

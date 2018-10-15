@@ -27,6 +27,8 @@
         <module>suyigou_page_web</module>
         <module>suyigou_user_service</module>
         <module>suyigou_user_web</module>
+        <module>suyigou_order_interface</module>
+        <module>suyigou_order_service</module>
     </modules>
 
     <!-- 集中定义依赖版本号 -->
