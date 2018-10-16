@@ -25,6 +25,7 @@ public class CartController {
     @Autowired
     private HttpServletResponse response;
 
+
     //向购物车添加item
     @RequestMapping("/add")
     public ResultInfo addGoods2CartList(Long itemId, Integer num) {
@@ -89,5 +90,12 @@ public class CartController {
     private void saveCartList2Cookie(List<Cart> cartList) {
         String cartStr = JSON.toJSONString(cartList, true);
         CookieUtil.setCookie(request, response, "cartList", cartStr, 3600 * 24, "utf-8");
+    }
+
+    @RequestMapping("/delete")
+    public void delete(){
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        System.out.println("当前登录用户为 = " + username);
+        cartService.delete(username);
     }
 }

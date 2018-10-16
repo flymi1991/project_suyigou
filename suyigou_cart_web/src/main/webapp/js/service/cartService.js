@@ -7,6 +7,12 @@ app.service('cartService', function ($http) {
             return $http.get('cart/findCartList.do');
         }
 
+        //生成二维码
+        this.createNative = function () {
+            debugger;
+            return $http.get('order/createNative.do');
+        }
+
         //添加商品到购物车
         this.addGoods2Cart = function (itemId, num) {
             return $http.get('cart/add.do?itemId=' + itemId + '&num=' + num);

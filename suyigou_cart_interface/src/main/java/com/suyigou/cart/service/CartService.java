@@ -36,4 +36,6 @@ public interface CartService {
      */
     public List<Cart> mergeCartList(List<Cart> cartList1, List<Cart> cartList2);
 
+
+    public void delete(String username);
 }

@@ -191,5 +191,10 @@ public class CartServiceImpl implements CartService {
         }
         return cartList1;
     }
+
+    @Override
+    public void delete(String username) {
+        redisTemplate.boundHashOps("cartList").delete(username);
+    }
 }
 

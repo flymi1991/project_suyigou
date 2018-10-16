@@ -34,6 +34,8 @@
         <module>suyigou_cart_interface</module>
         <module>suyigou_cart_service</module>
         <module>suyigou_cart_web</module>
+        <module>suyigou_pay_interface</module>
+        <module>suyigou_pay_service</module>
     </modules>
 
     <!-- 集中定义依赖版本号 -->
@@ -60,7 +62,6 @@
 
     <dependencyManagement>
         <dependencies>
-
             <!-- Spring -->
             <dependency>
                 <groupId>org.springframework</groupId>
